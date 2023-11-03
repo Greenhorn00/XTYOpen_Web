@@ -188,7 +188,7 @@ export default {
 
 <style scoped>
 .text{
-  font-size: 1.1vw;
+  font-size: 1vw;
 }
 @media (min-width: 768px){
   .text2{
