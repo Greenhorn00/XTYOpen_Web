@@ -176,7 +176,7 @@ export default {
             </div>
           </div>
           <div class="text item" style="white-space: pre-line; padding: 0px 15px; height: 500px;">
-            {{ item.post.name | truncate(250) }} ...
+            <div class="ql-editor" v-html="item.post.name" v-highlight></div>
           </div>
           <div style="display: flex; justify-content:flex-end;">
             <span style="font-weight: bold; color: #0043a1; text-shadow: 0px 2px 3px rgb(73,230,255); position: relative; top: 5px;">

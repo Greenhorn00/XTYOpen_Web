@@ -1,9 +1,17 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script>
+//调用富文本编辑器
+import "quill/dist/quill.core.css";
+import "quill/dist/quill.snow.css";
+import "quill/dist/quill.bubble.css";
+import { quillEditor } from "vue-quill-editor";
+
 export default {
   name: "Home",
   data() {
     return {
+      postUrl: this.$httpUrl,
+      quillUpdateImg:false,//加载图片
       isMobile: false, //手机端
       isVisible: false, //回到顶部
       centerDialogVisible: false,  //表单开关
@@ -28,6 +36,41 @@ export default {
         title: [
           {required: true, message: '标题不得为空', trigger: 'blur'}
         ]
+      },
+      // 富文本编辑器
+      editorOption: {
+        placeholder: "请在这里输入内容",
+        modules: {
+          toolbar: {
+            container: [
+              ["bold", "italic", "underline", "strike"], //加粗，斜体，下划线，删除线
+              ["blockquote", "code-block"], //引用，代码块
+              [{ header: 1 }, { header: 2 }], // 标题，键值对的形式；1、2表示字体大小
+              [{ list: "ordered" }, { list: "bullet" }], //列表
+              [{ script: "sub" }, { script: "super" }], // 上下标
+              [{ indent: "-1" }, { indent: "+1" }], // 缩进
+              [{ direction: "rtl" }], // 文本方向
+              [{ size: ["small", false, "large", "huge"] }], // 字体大小
+              // [{ header: [1, 2, 3, 4, 5, 6, false] }], //几级标题
+              [{ color: [] }, { background: [] }], // 字体颜色，字体背景颜色
+              // [{ font: [] }], //字体
+              [{ align: [] }], //对齐方式
+              ["clean"], //清除字体样式
+              ["image"] //上传图片、上传视频   "link" 链接  "video" 视频
+            ],
+            //重写图片上传事件
+            handlers: {
+              'image': function (value) {
+                if (value) {
+                  // 触发input框选择图片文件
+                  document.querySelector('.avatar-uploader input').click()
+                } else {
+                  this.quill.format('image', false);
+                }
+              }
+            },
+          },
+        },
       },
     }
   },
@@ -80,12 +123,18 @@ export default {
       });
     },
     save() {
+      //由于富文本编辑器生成的代码块只有pre标签,没有code标签,而前端的回显需要code标签,所以需要做处理
+      let newContent = this.form.name.replace(
+          /<pre class="ql-syntax" spellcheck="false">/g,
+          '<pre class="ql-syntax line-numbers language-js" spellcheck="false"><code class="language-js">'
+      );
+      newContent = newContent.replace(/<\/pre>/g, "</code></pre>");
       this.$refs['form'].validate((valid) => {
         if (valid) {
           this.loading = true;
           this.$axios.post(this.$httpUrl + '/post/save', {
             userid: this.user.id,
-            name: this.form.name,
+            name: newContent,
             title: this.form.title
           }).then(res => res.data)
               .then(res => {
@@ -189,6 +238,37 @@ export default {
     goToPost(postId) {
       this.$router.push('/Post/' + postId);
     },
+    //图片上传成功钩子函数
+    handleAvatarSuccess(res) {
+      // res为图片服务器返回的数据
+      // 获取富文本组件实例
+      let quill = this.$refs.myQuillEditor.quill
+      // 如果上传成功
+      if (res.sinaPath !== null) {
+        // 获取光标所在位置
+        let length = quill.selection.savedRange.index;
+        // 插入图片  res.info为服务器返回的图片地址
+        quill.insertEmbed(length, 'image', res.data)
+        // 调整光标到最后
+        quill.setSelection(length + 1)
+        this.quillUpdateImg = false;
+      } else {
+        this.$message.error('图片插入失败')
+      }
+    },
+    //图片上传前钩子函数
+    beforeAvatarUpload(file) {
+      // 显示loading动画
+      console.log(file);
+      this.quillUpdateImg = true
+    },
+//图片上传失败钩子函数
+    handleAvatarError() {
+      // loading动画消失
+      this.quillUpdateImg = false
+      this.$message.error('图片插入失败')
+    },
+
   },
   beforeMount() {
     this.loadPost();
@@ -205,6 +285,9 @@ export default {
   mounted() {
     this.checkIfMobile();
     window.addEventListener('resize', this.checkIfMobile);
+  },
+  components: {
+    quillEditor
   },
   filters: {
     truncate: function (text, length, clamp) {
@@ -259,8 +342,10 @@ export default {
               <span class="text2" style="padding-left: 0.5vw;">{{ item.post.title }}</span>
             </div>
             <div style="display: flex; justify-content:space-between;height: 14vw;">
-              <div class="text item" style=" padding-left:0.5vw; min-height: 20px; width: 40%;">
-                {{ item.post.name | truncate(200) }}
+              <div class="text item" style=" padding-left:0.5vw; min-height: 18px; max-height: 90%; width: 40%;">
+
+                <div class="ql-editor" v-html="item.post.name" v-highlight></div>
+<!--                {{ item.post.name | truncate(200) }}-->
               </div>
               <el-image :src="item.post.avatar" style="width: 40%;height: 15vw;position: relative;top: -2vw;">
                 <div slot="error" style="width: 100%;height: 100%;display: flex;justify-content: center;align-items: center;font-size: 14px;color: #858383;vertical-align: middle;background: #f5f7fa;">
@@ -301,14 +386,15 @@ export default {
         :visible.sync="centerDialogVisible"
         center
         title="发表"
-        width="40%">
+        width="80%"
+        >
       <el-form ref="form" :model="form" :rules="rules" label-width="80px" status-icon>
-        <el-form-item label="标题" prop="title">
-          <el-col :span="20">
-            <el-input v-model="form.title" style="font-size: 20px; font-weight: bold" type="textarea"></el-input>
+        <el-form-item label="标题" prop="title" style="position: relative;left: 5vw;">
+          <el-col :span="20" >
+            <el-input v-model="form.title" style="font-size: 20px; font-weight: bold" placeholder="请输入标题" type="textarea"></el-input>
           </el-col>
         </el-form-item>
-        <el-form-item label="正文" prop="name">
+<!--        <el-form-item label="正文" prop="name">
           <el-col :span="20">
             <el-input v-model="form.name"
                       :autosize="{ minRows: 8, maxRows: 12}"
@@ -316,8 +402,21 @@ export default {
                       style="font-size: 20px;"
                       type="textarea"></el-input>
           </el-col>
-        </el-form-item>
+        </el-form-item>-->
       </el-form>
+      <el-row v-loading="quillUpdateImg">
+        <quill-editor ref="myQuillEditor" v-model="form.name" :options="editorOption">
+        </quill-editor>
+      </el-row>
+      <!-- elementUI上传图片组件 -->
+      <el-upload class="avatar-uploader"
+                 :action="`${this.postUrl}/files/upPost`"
+                 :show-file-list="false"
+                 :on-success="handleAvatarSuccess"
+                 :on-error="handleAvatarError"
+                 :before-upload="beforeAvatarUpload">
+      </el-upload>
+
       <span slot="footer" class="dialog-footer">
         <el-button @click="centerDialogVisible = false; this.loading = false;">取 消</el-button>
         <el-button :loading="loading" type="primary" @click="save">{{ loading ? '提交中 ...' : '确 定' }}</el-button>
@@ -330,9 +429,79 @@ export default {
 <style scoped>
 .text {
   font-size: 0.9vw;
+  ::-webkit-scrollbar {
+    /*隐藏滚轮*/
+    display: none;
+  }
+}
+.editor {
+  line-height: normal !important;
+  height: 800px;
+}
+.ql-snow .ql-tooltip[data-mode='link']::before {
+  content: '请输入链接地址:';
+}
+.ql-snow .ql-tooltip.ql-editing a.ql-action::after {
+  border-right: 0px;
+  content: '保存';
+  padding-right: 0px;
+}
+.ql-snow .ql-tooltip[data-mode='video']::before {
+  content: '请输入视频地址:';
+}
+.ql-snow .ql-picker.ql-size .ql-picker-label::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item::before {
+  content: '14px';
+}
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='small']::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value='small']::before {
+  content: '10px';
+}
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='large']::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value='large']::before {
+  content: '18px';
+}
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='huge']::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value='huge']::before {
+  content: '32px';
+}
+.ql-snow .ql-picker.ql-header .ql-picker-label::before,
+.ql-snow .ql-picker.ql-header .ql-picker-item::before {
+  content: '文本';
+}
+.ql-snow .ql-picker.ql-header .ql-picker-label[data-value='1']::before,
+.ql-snow .ql-picker.ql-header .ql-picker-item[data-value='1']::before {
+  content: '标题1';
+}
+.ql-snow .ql-picker.ql-header .ql-picker-label[data-value='2']::before,
+.ql-snow .ql-picker.ql-header .ql-picker-item[data-value='2']::before {
+  content: '标题2';
+}
+.ql-snow .ql-picker.ql-header .ql-picker-label[data-value='3']::before,
+.ql-snow .ql-picker.ql-header .ql-picker-item[data-value='3']::before {
+  content: '标题3';
+}
+.ql-snow .ql-picker.ql-header .ql-picker-label[data-value='4']::before,
+.ql-snow .ql-picker.ql-header .ql-picker-item[data-value='4']::before {
+  content: '标题4';
+}
+.ql-snow .ql-picker.ql-header .ql-picker-label[data-value='5']::before,
+.ql-snow .ql-picker.ql-header .ql-picker-item[data-value='5']::before {
+  content: '标题5';
+}
+.ql-snow .ql-picker.ql-header .ql-picker-label[data-value='6']::before,
+.ql-snow .ql-picker.ql-header .ql-picker-item[data-value='6']::before {
+  content: '标题6';
 }
 
+
 @media (min-width: 768px) {
+  .quill-editor {
+    width: 90%;
+    margin: 0 auto;
+    height: 20vw;
+    padding-bottom: 3.5vw;
+  }
   .imgs {
     height: 100%;
   }

@@ -5,6 +5,9 @@ import 'element-ui/lib/theme-chalk/index.css';
 import  './assets/global.css';
 import axios from "axios";
 
+//引入代码块高亮插件
+import Highlight from "./codeFont/index.js";
+
 import VueRouter from "vue-router"; //路由
 import router from "@/router";
 import store from "@/store";//路由
@@ -13,12 +16,13 @@ import store from "@/store";//路由
 import VueSmoothScroll from "vue2-smooth-scroll";
 Vue.prototype.$music = new Audio();
 Vue.prototype.$axios=axios;
-Vue.prototype.$httpUrl=' http://123.57.77.249:8090'; //后端地址
-// Vue.prototype.$httpUrl=' http://localhost:8090'; //后端地址
+// Vue.prototype.$httpUrl=' http://123.57.77.249:8090'; //后端地址
+Vue.prototype.$httpUrl=' http://localhost:8090'; //后端地址
 Vue.config.productionTip = false
 Vue.use(ElementUI);
 Vue.use(VueRouter);
 Vue.use(VueSmoothScroll);
+Vue.use(Highlight);
 new Vue({
   router,
   store,

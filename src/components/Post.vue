@@ -1,5 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script >
+
 export default {
   name: "Post",
   data(){
@@ -8,6 +9,7 @@ export default {
       PostMain:[],
       isMobile: false,
       user:'',
+
     }
   },
   beforeMount() {
@@ -146,7 +148,7 @@ export default {
           </div>
         </div>
         <div class="text item" style="white-space: pre-line; padding: 0px 15px; min-height: 150px; ">
-          {{ item.post.name }}
+          <div class="ql-editor" v-html="item.post.name" v-highlight></div>
         </div>
         <div style="display: flex; justify-content:flex-end;">
             <span
@@ -190,6 +192,7 @@ export default {
 .text{
   font-size: 1vw;
 }
+
 @media (min-width: 768px){
   .text2{
     font-size: 1.2vw;
