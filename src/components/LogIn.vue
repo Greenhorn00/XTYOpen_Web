@@ -22,11 +22,12 @@ export default {
         }
       })
     };
-
     return {
       loading: false,
       confirm_disabled: false,
       centerDialogVisible: false,
+      GoogleId: "903775319941-h0b8q3qvip0b7t6dubfa6ir9pqd65r6c.apps.googleusercontent.com",
+      httpsBack: this.$httpUrl,
       sexs: [
         {
           value: '1',
@@ -126,25 +127,25 @@ export default {
     confirm() {
       this.confirm_disabled = true;
       this.$refs.loginForm.validate((valid) => {
-        if(valid){
-          this.$axios.post(this.$httpUrl + '/user/login',this.loginForm).then(res => res.data).then(res => {
+        if (valid) {
+          this.$axios.post(this.$httpUrl + '/user/login', this.loginForm).then(res => res.data).then(res => {
             console.log(res)
-            if(res.code == 200){
+            if (res.code == 200) {
 
               this.$notify({
-                title: '欢迎'+res.data.user.name,
+                title: '欢迎' + res.data.user.name,
                 message: '欢迎回来',
                 type: 'success'
               });
               // 储存
               sessionStorage.setItem("CurUser", JSON.stringify(res.data.user))
-              this.$store.commit("setMenu",res.data.menu) // 设置传来路由
+              this.$store.commit("setMenu", res.data.menu) // 设置传来路由
 
               console.log(res.data.menu)
               //跳转
               this.$router.replace('/Index')
 
-            }else {
+            } else {
               this.confirm_disabled = false;
               this.$message({
                 showClose: true,
@@ -169,6 +170,52 @@ export default {
           .catch(() => {
           });
     },
+    callback(googleUser) {
+      var tokens = googleUser.credential.split(".");
+      var payload = JSON.parse(atob(tokens[1]));
+      console.log(`user id ${payload.sub}`)
+      console.log(`user name ${payload.name}`)
+      console.log(`user picture ${payload.picture}`)
+      console.log(`user email ${payload.email}`)
+      this.$axios.post(this.$httpUrl + '/user/loginWithGoogle', {
+        id: '',
+        no: payload.sub.substr(0, 19),
+        name: payload.name,
+        password: '123',
+        age: 18,
+        sex: 0,
+        phone: payload.email.substr(0, 17),
+        roleId: '2',
+        isvalid: 'Y',
+        level: '0',
+        avatar: payload.picture
+      }).then(res => res.data)
+          .then(res => {
+            if (res.code == 200) {
+
+              this.$notify({
+                title: '欢迎' + res.data.user.name,
+                message: '欢迎回来',
+                type: 'success'
+              });
+              // 储存
+              sessionStorage.setItem("CurUser", JSON.stringify(res.data.user))
+              this.$store.commit("setMenu", res.data.menu) // 设置传来路由
+
+              console.log(res.data.menu)
+              //跳转
+              this.$router.replace('/Index')
+
+            } else {
+              this.confirm_disabled = false;
+              this.$message({
+                showClose: true,
+                message: '账号错误,或此账号已封',
+                type: 'error',
+              });
+            }
+          })
+    }
   },
   mounted() {
     this.updateVideoSize();
@@ -177,12 +224,34 @@ export default {
   beforeDestroy() {
     window.removeEventListener('resize', this.updateVideoSize);
   },
+  created() {
+    const script = document.createElement("script");
+    script.src = "https://accounts.google.com/gsi/client";
+    document.body.appendChild(script);
+
+    window.addEventListener("load", () => {
+      window.google.accounts.id.initialize({
+        // 主要就是填写client_id
+        client_id: this.GoogleId,
+        auto_select: false,
+        callback: this.callback,
+      });
+      // 设置按钮的样式等
+      window.google.accounts.id.renderButton(
+          document.getElementById("g_id_signin"),
+          {
+            size: "large",
+            type: "standard",
+            text: "signin_with",
+          }
+      );
+    });
+  }
 };
 </script>
 
 <template>
-  <div >
-
+  <div>
     <div class="loginOutLine">
       <div class="loginOut">
         <h2 class="login-title">XTYOpen</h2>
@@ -190,10 +259,9 @@ export default {
                  :model="loginForm"
                  :rules="rules"
                  class="log-form"
-                 label-width="60px"
                  style=" margin-top: 20px;">
-          <el-form-item label="账号" prop="no">
-            <el-col :span="21">
+          <el-form-item label="" prop="no">
+            <el-col >
               <el-input
                   v-model="loginForm.no"
                   clearable
@@ -202,38 +270,38 @@ export default {
               </el-input>
             </el-col>
           </el-form-item>
-          <el-form-item label="密码" prop="password">
-            <el-col :span="21">
+          <el-form-item label="" prop="password">
+            <el-col >
               <el-input
                   v-model="loginForm.password"
                   clearable
-                  placeholder="账号"
+                  placeholder="密码"
                   show-password
                   type="password" @keyup.enter.native="confirm">
               </el-input>
             </el-col>
           </el-form-item>
           <el-form-item>
-            <el-col>
-              <el-button :disabled="confirm_disabled" style="width: 300px; margin-top: 5px;" type="primary"
+            <el-col style="display: flex; justify-content: space-between;">
+              <el-button style="width: 30%; margin-top: 5px; font-size: 0.9vw;"
+                         @click="add"> 注册
+              </el-button>
+              <el-button :disabled="confirm_disabled" style="width: 70%; margin-top: 5px; font-size: 0.9vw;" type="primary"
                          @click="confirm"> 登陆
               </el-button>
             </el-col>
           </el-form-item>
-          <el-form-item>
-            <el-col>
-              <el-button style="width: 300px;" type="success"
-                         @click="add"> 注册
-              </el-button>
-            </el-col>
-          </el-form-item>
+          <div style="width: 100%;display: flex; justify-content: center;">
+            <div id="g_id_signin" class="g_id_signin"></div>
+          </div>
+
         </el-form>
       </div>
     </div>
 
     <div class="video-container">
-      <video ref="videoRef" class="video" autoplay muted loop>
-        <source src="../assets/video/back.mp4" type="video/mp4" />
+      <video ref="videoRef" autoplay class="video" loop muted>
+        <source src="../assets/video/back.mp4" type="video/mp4"/>
       </video>
     </div>
 
@@ -278,7 +346,7 @@ export default {
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="centerDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="save" :loading="loading">{{ loading ? '提交中 ...' : '确 定' }}</el-button>
+        <el-button :loading="loading" type="primary" @click="save">{{ loading ? '提交中 ...' : '确 定' }}</el-button>
       </span>
     </el-dialog>
   </div>
@@ -300,7 +368,7 @@ export default {
   object-fit: cover;
 }
 
-@media (min-width: 768px){
+@media (min-width: 768px) {
   .loginOutLine {
     display: flex;
     justify-content: center;
@@ -313,8 +381,8 @@ export default {
   }
 
   .loginOut {
-    width: 400px;
-    padding: 50px 15px;
+    width: 325px;
+    padding: 50px 15px 25px 15px;
     background: transparent;
     box-shadow: 0 15px 20px rgba(0, 0, 0, 0);
     transition: .5s;
@@ -336,7 +404,6 @@ export default {
   .loginOut h2 {
     position: relative;
     top: 40px;
-    left: 11px;
     margin-bottom: 10px;
     text-align: center;
     color: rgb(255, 255, 255);
@@ -365,7 +432,8 @@ export default {
     transition: 0.1s;
   }
 }
-@media (min-width: 0px) and (max-width:768px){
+
+@media (min-width: 0px) and (max-width: 768px) {
   .loginOutLine {
     display: flex;
     justify-content: center;
@@ -405,7 +473,6 @@ export default {
   }
 
 }
-
 
 
 @keyframes xty {

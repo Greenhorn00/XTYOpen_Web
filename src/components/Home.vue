@@ -268,7 +268,6 @@ export default {
       this.quillUpdateImg = false
       this.$message.error('图片插入失败')
     },
-
   },
   beforeMount() {
     this.loadPost();
