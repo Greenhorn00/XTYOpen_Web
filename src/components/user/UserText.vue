@@ -542,10 +542,10 @@ export default{
     padding-bottom: 3.5vw;
   }
   .timeline{
-    margin-left: 22%;
+    margin-left: 10%;
   }
   .box-card{
-    width: 60%;
+    width: 85%;
   }
   .text2{
     font-size: larger;

@@ -84,26 +84,28 @@ export default {
 <div>
 
   <el-button class="floating-button" icon="el-icon-upload" type="primary" @click="drawer=true;">上传</el-button>
-  <el-table
-      v-if="FileList.length !== 0"
-      :data="FileList"
-      :header-cell-style="{ background:'#F0F0F0', color:'#000'}"
-      border
-      style="width: 95%; margin: 20px auto; box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);">
-    <el-table-column label="文件名" prop="name">
+  <div style="height: 80vh;">
+    <el-table
+        v-if="FileList.length !== 0"
+        :data="FileList"
+        :header-cell-style="{ background:'#F0F0F0', color:'#000'}"
+        border
+        style="width: 95%; margin: 20px auto; box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);">
+      <el-table-column label="文件名" prop="name">
 
-    </el-table-column>
-    <el-table-column label="路径" prop="file" >
-    </el-table-column>
-    <el-table-column label="操作" prop="operate" >
-      <template slot-scope="scope">
-        <a :href="scope.row.file" :download="scope.row.name" target="_blank">
-          <el-button type="primary" slot="reference" icon="el-icon-download" style="margin-left: 10px;">下载</el-button>
-        </a>
-        <el-button slot="reference" icon="el-icon-delete-solid" type="danger" @click="fileDel(scope.row.file)" style=" margin-left: 10px;"></el-button>
-      </template>
-    </el-table-column>
-  </el-table>
+      </el-table-column>
+      <el-table-column label="路径" prop="file" >
+      </el-table-column>
+      <el-table-column label="操作" prop="operate" >
+        <template slot-scope="scope">
+          <a :href="scope.row.file" :download="scope.row.name" target="_blank">
+            <el-button type="primary" slot="reference" icon="el-icon-download" style="margin-left: 10px;">下载</el-button>
+          </a>
+          <el-button slot="reference" icon="el-icon-delete-solid" type="danger" @click="fileDel(scope.row.file)" style=" margin-left: 10px;"></el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+  </div>
 
   <el-empty v-if="FileList.length === 0">
     <el-button type="success" @click="drawer=true;">上传文件 !</el-button>

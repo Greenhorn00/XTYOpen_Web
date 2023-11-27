@@ -129,7 +129,7 @@ export default {
         console.log("您的浏览器不支持WebSocket");
       } else {
         console.log("您的浏览器支持WebSocket");
-        let socketUrl = "ws://" + this.$httpUrl.replace("http://", "").replace(/\s/g, "") + "/imserver/" + username;
+        let socketUrl = "wss://" + this.$httpUrl.replace("https://", "").replace(/\s/g, "") + "/imserver/" + username;
         if (socket != null) {
           socket.close();
           socket = null;

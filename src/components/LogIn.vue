@@ -26,6 +26,8 @@ export default {
       loading: false,
       confirm_disabled: false,
       centerDialogVisible: false,
+      haveUser: false,
+      haveUserIs:'',
       GoogleId: "903775319941-h0b8q3qvip0b7t6dubfa6ir9pqd65r6c.apps.googleusercontent.com",
       httpsBack: this.$httpUrl,
       sexs: [
@@ -116,7 +118,21 @@ export default {
                     type: 'error'
                   });
                 }
-              })
+              }).catch(error => {
+            // 在请求失败或超时时执行的操作
+            console.log(error);
+            this.loading = false;
+            this.confirm_disabled = false;
+            this.$message({
+              showClose: true,
+              message: '请求失败或超时，请重试',
+              type: 'error',
+            });
+            this.$alert('<a href="https://123.57.77.249:8090/user/hi" target="_blank"> 点此授权访问 以使用此网站</a>', '抱歉`(*>﹏<*)′需要您的授权', {
+              dangerouslyUseHTMLString: true,
+              confirmButtonText: '好的，我已点击',
+            });
+          });
           this.resetForm('form');
         } else {
           console.log('error submit!!');
@@ -128,6 +144,7 @@ export default {
       this.confirm_disabled = true;
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
+          this.loading=true;
           this.$axios.post(this.$httpUrl + '/user/login', this.loginForm).then(res => res.data).then(res => {
             console.log(res)
             if (res.code == 200) {
@@ -138,14 +155,21 @@ export default {
                 type: 'success'
               });
               // 储存
-              sessionStorage.setItem("CurUser", JSON.stringify(res.data.user))
-              this.$store.commit("setMenu", res.data.menu) // 设置传来路由
-
-              console.log(res.data.menu)
+              sessionStorage.setItem("CurUser", JSON.stringify(res.data.user));
+              this.$store.commit("setMenu", res.data.menu); // 设置传来路由
+              // 以对象的形式保存账号密码
+              const user = {
+                no: res.data.user.no,
+                password: res.data.user.password,
+                name: res.data.user.name,
+                avatar: res.data.user.avatar
+              };
+              localStorage.setItem("userLogIn", JSON.stringify(user));//记住密码
+              this.loading=false;
               //跳转
               this.$router.replace('/Index')
-
             } else {
+              this.loading=false;
               this.confirm_disabled = false;
               this.$message({
                 showClose: true,
@@ -153,7 +177,21 @@ export default {
                 type: 'error',
               });
             }
-          })
+          }).catch(error => {
+            // 在请求失败或超时时执行的操作
+            console.log(error);
+            this.loading = false;
+            this.confirm_disabled = false;
+            this.$message({
+              showClose: true,
+              message: '请求失败或超时，请重试',
+              type: 'error',
+            });
+            this.$alert('<a href="https://123.57.77.249:8090/user/hi" target="_blank"> 前往授权访问以使用此网站</a>', '抱歉`(*>﹏<*)′需要您的授权', {
+              dangerouslyUseHTMLString: true,
+              confirmButtonText: '好的，我已点击',
+            });
+          });
         }
       })
     },
@@ -179,7 +217,7 @@ export default {
       console.log(`user email ${payload.email}`)
       this.$axios.post(this.$httpUrl + '/user/loginWithGoogle', {
         id: '',
-        no: payload.sub.substr(0, 19),
+        no: payload.sub.substr(0, 9),
         name: payload.name,
         password: '123',
         age: 18,
@@ -214,7 +252,20 @@ export default {
                 type: 'error',
               });
             }
-          })
+          }).catch(error => {
+        // 在请求失败或超时时执行的操作
+        console.log(error);
+        this.confirm_disabled = false;
+        this.$message({
+          showClose: true,
+          message: '请求失败或超时，请重试',
+          type: 'error',
+        });
+        this.$alert('<a href="https://123.57.77.249:8090/user/hi" target="_blank"> 前往授权访问以使用此网站</a>', '抱歉`(*>﹏<*)′需要您的授权', {
+          dangerouslyUseHTMLString: true,
+          confirmButtonText: '好的，我已点击',
+        });
+      });
     }
   },
   mounted() {
@@ -246,6 +297,17 @@ export default {
           }
       );
     });
+    let userLogIn = localStorage.getItem("userLogIn");
+    if(userLogIn){
+      userLogIn = JSON.parse(userLogIn);
+      this.loginForm.no=userLogIn.no;
+      this.loginForm.password=userLogIn.password;
+      this.haveUserIs = {
+        avatar: userLogIn.avatar,
+        name: userLogIn.name,
+      };
+      this.haveUser = true;
+    }
   }
 };
 </script>
@@ -260,33 +322,50 @@ export default {
                  :rules="rules"
                  class="log-form"
                  style=" margin-top: 20px;">
-          <el-form-item label="" prop="no">
-            <el-col >
-              <el-input
-                  v-model="loginForm.no"
-                  clearable
-                  placeholder="账号"
-                  type="text">
-              </el-input>
+          <el-form-item v-if="this.haveUser">
+            <el-col>
+              <div style="margin-top: 1em; width: 100%; text-align: center; display: flex;flex-direction: column;justify-content: center;align-items: center;">
+                <el-avatar :size="90" :src="(this.haveUser) ? this.haveUserIs.avatar : '#'">
+                  {{ (this.haveUser) ? this.haveUserIs.name : "未登录" }}
+                </el-avatar>
+                <span style="font-size: large;">{{  (this.haveUser) ? this.haveUserIs.name : "未登录"}}</span>
+              </div>
             </el-col>
           </el-form-item>
-          <el-form-item label="" prop="password">
-            <el-col >
-              <el-input
-                  v-model="loginForm.password"
-                  clearable
-                  placeholder="密码"
-                  show-password
-                  type="password" @keyup.enter.native="confirm">
-              </el-input>
-            </el-col>
-          </el-form-item>
+          <div v-if="!this.haveUser">
+            <el-form-item label="" prop="no">
+              <el-col >
+                <el-input
+                    v-model="loginForm.no"
+                    clearable
+                    placeholder="账号"
+                    type="text">
+                </el-input>
+              </el-col>
+            </el-form-item>
+            <el-form-item label="" prop="password">
+              <el-col >
+                <el-input
+                    v-model="loginForm.password"
+                    clearable
+                    placeholder="密码"
+                    show-password
+                    type="password" @keyup.enter.native="confirm">
+                </el-input>
+              </el-col>
+            </el-form-item>
+          </div>
           <el-form-item>
             <el-col style="display: flex; justify-content: space-between;">
-              <el-button style="width: 30%; margin-top: 5px; font-size: 0.9vw;"
-                         @click="add"> 注册
+              <el-button style="width: 30%; margin-top: 5px; font-size: large;"
+                         @click="add"
+                         v-if="!this.haveUser"> 注册
               </el-button>
-              <el-button :disabled="confirm_disabled" style="width: 70%; margin-top: 5px; font-size: 0.9vw;" type="primary"
+              <el-button style="width: 30%; margin-top: 5px; font-size: large;"
+                         @click="haveUser=false;"
+                         v-if="this.haveUser"> 切换
+              </el-button>
+              <el-button :disabled="confirm_disabled" :loading="loading" style="width: 70%; margin-top: 5px; font-size: large;" type="primary"
                          @click="confirm"> 登陆
               </el-button>
             </el-col>

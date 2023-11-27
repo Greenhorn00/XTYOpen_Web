@@ -317,6 +317,9 @@ export default {
 </template>
 
 <style scoped>
+*{
+  user-select: none;
+}
 @media (min-width: 768px) {
   .dengJi {
     transform: scale(0.9);

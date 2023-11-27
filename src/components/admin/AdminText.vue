@@ -175,7 +175,7 @@ export default {
               {{ new Date(item.post.time).getHours() }}:{{ new Date(item.post.time).getMinutes() }}
             </div>
           </div>
-          <div class="text item" style="white-space: pre-line; padding: 0px 15px; height: 500px;">
+          <div class="text item" style="white-space: pre-line; padding: 0 15px; height: 500px;">
             <div class="ql-editor" v-html="item.post.name" v-highlight></div>
           </div>
           <div style="display: flex; justify-content:flex-end;">

@@ -16,8 +16,8 @@ import store from "@/store";//路由
 import VueSmoothScroll from "vue2-smooth-scroll";
 Vue.prototype.$music = new Audio();
 Vue.prototype.$axios=axios;
-// Vue.prototype.$httpUrl=' http://123.57.77.249:8090'; //后端地址
-Vue.prototype.$httpUrl=' http://localhost:8090'; //后端地址
+Vue.prototype.$httpUrl=' https://123.57.77.249:8090'; //后端地址
+// Vue.prototype.$httpUrl=' https://localhost:8090'; //后端地址
 Vue.config.productionTip = false
 Vue.use(ElementUI);
 Vue.use(VueRouter);
