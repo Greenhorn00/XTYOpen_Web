@@ -84,9 +84,11 @@ export default {
 <div>
 
   <el-button class="floating-button" icon="el-icon-upload" type="primary" @click="drawer=true;">上传</el-button>
-  <div style="height: 80vh;">
+  <el-empty v-if="FileList.length === 0">
+    <el-button type="success" @click="drawer=true;">上传文件 !</el-button>
+  </el-empty>
+  <div style="height: 80vh;" v-if="FileList.length !== 0">
     <el-table
-        v-if="FileList.length !== 0"
         :data="FileList"
         :header-cell-style="{ background:'#F0F0F0', color:'#000'}"
         border
@@ -106,10 +108,6 @@ export default {
       </el-table-column>
     </el-table>
   </div>
-
-  <el-empty v-if="FileList.length === 0">
-    <el-button type="success" @click="drawer=true;">上传文件 !</el-button>
-  </el-empty>
 
   <el-dialog :visible.sync="drawer">
     <el-upload
