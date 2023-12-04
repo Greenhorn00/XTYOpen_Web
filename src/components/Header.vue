@@ -106,7 +106,6 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        console.log(this.audio.src + "这个这个" + file)
         if (this.audio.src === file) {
           this.mUp();
         }
@@ -248,6 +247,7 @@ export default {
     },
 
     handleKeyPress(event) {
+      if(!this.musicShow) return;
       // 判断按下的键是什么，然后执行相应的操作
       switch (event.key) {
         case 'ArrowLeft':
