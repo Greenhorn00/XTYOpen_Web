@@ -247,20 +247,22 @@ export default {
     },
 
     handleKeyPress(event) {
-      if(!this.musicShow) return;
-      // 判断按下的键是什么，然后执行相应的操作
-      switch (event.key) {
-        case 'ArrowLeft':
-          this.mDown();
-          break;
-        case ' ':
-          this.mPlay();
-          break;
-        case 'ArrowRight':
-          this.mUp();
-          break;
-          // 可以添加其他键的处理逻辑
+      if(this.musicShow) {
+        // 判断按下的键是什么，然后执行相应的操作
+        switch (event.key) {
+          case 'ArrowLeft':
+            this.mDown();
+            break;
+          case ' ':
+            this.mPlay();
+            break;
+          case 'ArrowRight':
+            this.mUp();
+            break;
+            // 可以添加其他键的处理逻辑
+        }
       }
+
     }
 
   },
