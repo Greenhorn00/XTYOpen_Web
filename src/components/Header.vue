@@ -8,6 +8,7 @@ export default {
       base_music1: "我会等",
       postUrl: this.$httpUrl,
       musicShow: false,
+      musicIMG:'./music.jpg',
       musicPlayer: "el-icon-video-play",
       greetingMessage: "", // 存储问候消息的变量
       greetingMessages: {
@@ -140,6 +141,7 @@ export default {
         });
         this.audio.play();
         this.musicPlayer = "el-icon-video-pause";
+        this.findMusic(music.title);
       } else {
         this.audio.pause();
         this.$notify({
@@ -170,7 +172,7 @@ export default {
       });
       this.audio.play();
       this.musicPlayer = "el-icon-video-pause";
-
+      this.findMusic(music.title);
       this.audio.onended = () => {
         this.mUp();
       };
@@ -191,6 +193,7 @@ export default {
       });
       this.audio.play();
       this.musicPlayer = "el-icon-video-pause";
+      this.findMusic(music.title);
 
       this.audio.onended = () => {
         this.mUp();
@@ -209,6 +212,7 @@ export default {
       });
       this.audio.play();
       this.musicPlayer = "el-icon-video-pause";
+      this.findMusic(music.title);
 
       this.audio.onended = () => {
         this.mUp();
@@ -263,7 +267,16 @@ export default {
         }
       }
 
-    }
+    },
+    findMusic(name){
+      this.$axios.get(this.$httpUrl + '/searchImage/' + name ).then(res => res.data).then(res => {
+        if (res.code === 200) {
+          this.musicIMG=res.data
+        } else {
+          this.musicIMG='./music.jpg'
+        }
+      })
+    },
 
   },
   props: {
@@ -324,7 +337,7 @@ export default {
         </div>
         <div style="height: 100%; width: 100%; display: flex;flex-direction: column;">
           <div style="text-align: center;margin-top: 10%;">
-            <el-avatar :class="{ 'rotate-avatar': !this.audio.paused }" :size="this.isMobile?250:350" icon="el-icon-headset" src="./music.jpg"
+            <el-avatar :class="{ 'rotate-avatar': !this.audio.paused }" :size="this.isMobile?250:350" icon="el-icon-headset" :src="this.musicIMG"
                        style="font-size: 100px;">
             </el-avatar>
           </div>

@@ -90,7 +90,7 @@ export default {
         html = "<div class=\"el-row\" style=\"padding: 5px 0\">\n" +
             "  <div class=\"el-col el-col-22\" style=\"text-align: right; padding-right: 10px\">\n" +
             "    <div style=\"color: white; text-align: center; border-radius: 10px; font-family: sans-serif;" +
-            " padding: 10px; width:auto; max-width: 25vw; word-wrap: break-word; display:inline-block !important; box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.3);" +
+            " padding: 10px; width:auto; max-width: 25vw; word-wrap: break-word; display:inline-block !important; box-shadow: 0 5px 20px 1px rgba(0, 0, 0, 0.3);" +
             " background-color: forestgreen;\">" + text + "</div>\n" +
             "  </div>\n" +
             "  <div class=\"el-col el-col-2\">\n" +
@@ -108,7 +108,7 @@ export default {
             "  </div>\n" +
             "  <div class=\"el-col el-col-22\" style=\" text-align: left; padding-left: 10px\">\n" +
             "    <div style=\"color: white; text-align: center; border-radius: 10px; font-family: sans-serif;" +
-            " padding: 10px; width:auto; max-width: 25vw; word-wrap: break-word; display:inline-block !important; box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.3);" +
+            " padding: 10px; width:auto; max-width: 25vw; word-wrap: break-word; display:inline-block !important; box-shadow: 0 5px 20px 1px rgba(0, 0, 0, 0.3);" +
             " background-color: deepskyblue;\">" + text + "</div>\n" +
             "  </div>\n" +
             "</div>";
@@ -187,7 +187,7 @@ export default {
       <el-row style="display: flex; justify-content: space-between; min-height: 94vh;">
         <el-col :span="4">
           <el-card style=" height: 100%; color: #333">
-            <div style="padding-bottom: 10px; border-bottom: 1px solid #ccc">在线用户<span style="font-size: 12px">（点击开始聊天）</span>
+            <div style="padding-bottom: 10px; border-bottom: 1px solid #ccc">
             </div>
             <el-button style="width: 100%; padding: 10px 0;margin-top: 10px;" :disabled="true">
               <el-avatar :size="40" :src="this.user.avatar" style="margin-right: 12px;">我</el-avatar>
@@ -217,12 +217,12 @@ export default {
               {{ chatUser?(chatUser): "请选择用户" }}
             </div>
             <el-divider></el-divider>
-            <div ref="scrollDiv" style="height: 68vh; width: 75%; overflow:auto; margin-bottom: 10px;"
+            <div ref="scrollDiv" style="height: 68vh; width: 75%; overflow:auto; margin-bottom: 10px;" :style="{ 'background-image': 'url(' + this.chatBack + ')'}"
                  v-html="content"></div>
             <div style="width: 100%; display: flex; justify-items: center; justify-content: center;">
               <el-input v-model="text" :autosize="{ minRows: 2, maxRows: 3}" placeholder="请输入内容" resize="none"
                         show-word-limit
-                        style="width: 80%; margin-right: 10px; font-size: large; box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1)"
+                        style="width: 35%; margin-right: 10px; font-size: large; box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.3)"
                         type="textarea" @keyup.enter.native="send"></el-input>
               <el-button size="medium" type="primary" class="sendButton" @click="send">发送</el-button>
             </div>
