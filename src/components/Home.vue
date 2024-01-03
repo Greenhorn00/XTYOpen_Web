@@ -22,7 +22,7 @@ export default {
       srcList: [
         'https://getwallpapers.com/wallpaper/full/a/2/2/1327355-best-fallout-4-vault-tec-wallpaper-1920x1200.jpg',
         'https://vignette.wikia.nocookie.net/scp/images/8/86/800px-SCP002.jpg/revision/latest?cb=20121125025010&path-prefix=es',
-        'https://cdn.wallpapersafari.com/94/82/OQXgMh.jpg',
+        this.$httpUrl + '/static/file/14/wg.png',
       ],
 
       form: {
