@@ -322,7 +322,7 @@ export default {
       </el-dropdown>
     </div>
 
-    <el-dialog :visible.sync="musicShow" center fullscreen=true width="80%" custom-class="musicDialog">
+    <el-dialog :visible.sync="musicShow" center fullscreen width="80%" custom-class="musicDialog">
       <video class="background-video" autoplay muted loop>
         <source src="../assets/video/ingame.mp4" type="video/mp4">
       </video>

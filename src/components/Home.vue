@@ -5,9 +5,13 @@ import "quill/dist/quill.core.css";
 import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
 import { quillEditor } from "vue-quill-editor";
-
+import HomeTop from "@/components/HomeTop.vue";
 export default {
   name: "Home",
+  components: {
+    HomeTop,
+    quillEditor
+  },
   data() {
     return {
       postUrl: this.$httpUrl,
@@ -22,7 +26,7 @@ export default {
       srcList: [
         'https://getwallpapers.com/wallpaper/full/a/2/2/1327355-best-fallout-4-vault-tec-wallpaper-1920x1200.jpg',
         'https://vignette.wikia.nocookie.net/scp/images/8/86/800px-SCP002.jpg/revision/latest?cb=20121125025010&path-prefix=es',
-        this.$httpUrl + '/static/file/14/wg.png',
+         require('../assets/img/cloud00.jpg'),
       ],
 
       form: {
@@ -285,9 +289,6 @@ export default {
     this.checkIfMobile();
     window.addEventListener('resize', this.checkIfMobile);
   },
-  components: {
-    quillEditor
-  },
   filters: {
     truncate: function (text, length, clamp) {
       clamp = clamp || "...";
@@ -306,6 +307,7 @@ export default {
 
 <template>
   <div id="body" class="light-mode">
+    <HomeTop></HomeTop>
 
     <el-button circle class="floating-button" icon="el-icon-plus" type="primary" @click="update"></el-button>
     <el-button v-if="isVisible" circle class="scroll-to-top" icon="el-icon-top" @click="scrollToTop"></el-button>
@@ -423,6 +425,7 @@ export default {
 </template>
 
 <style scoped>
+
 .text {
   font-size: 0.9vw;
   ::-webkit-scrollbar {
