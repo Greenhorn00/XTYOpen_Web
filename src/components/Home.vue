@@ -346,10 +346,7 @@ export default {
                 <div class="ql-editor" v-html="item.post.name" v-highlight></div>
 <!--                {{ item.post.name | truncate(200) }}-->
               </div>
-              <el-image :src="item.post.avatar" style="width: 40%;height: 15vw;position: relative;top: -2vw;">
-                <div slot="error" style="width: 100%;height: 100%;display: flex;justify-content: center;align-items: center;font-size: 14px;color: #858383;vertical-align: middle;background: #f5f7fa;">
-                  {{ item.post.userno }}
-                </div>
+              <el-image :src="item.Img ? item.Img : require('../assets/img/homeB.jpg')" style="width: 40%;height: 15vw;position: relative;top: -2vw;">
               </el-image>
             </div>
             <div style="display: flex; justify-content:space-between;">

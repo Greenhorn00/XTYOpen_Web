@@ -8,7 +8,7 @@ export default {
       base_music1: "我会等",
       postUrl: this.$httpUrl,
       musicShow: false,
-      musicIMG:'./music.jpg',
+      musicIMG: require('../assets/img/music.jpg'),
       musicPlayer: "el-icon-video-play",
       greetingMessage: "", // 存储问候消息的变量
       greetingMessages: {
@@ -399,7 +399,6 @@ export default {
   }
 }
 /deep/ .musicDialog {
-  //background-image: url("../../public/Background.jpg");
   background-color: #333333;
   z-index: -10;
 }

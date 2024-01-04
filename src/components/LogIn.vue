@@ -187,7 +187,7 @@ export default {
               message: '请求失败或超时，请重试',
               type: 'error',
             });
-            this.$alert(' <a href="'+ this.httpsBack + '/user/hi" target="_blank"> <img src="./help.png" alt="" style="width: 100%;height:100%; display:block; margin: 10px 0;"> <button style="width: 100%;height: 50px; font-size: large;">前往授权此网站</button></a>', '抱歉`(*>﹏<*)′需要您的授权', {
+            this.$alert(' <a href="'+ this.httpsBack + '/user/hi" target="_blank"> <img src="'+ require('../assets/img/help.png') +'" alt="" style="width: 100%;height:100%; display:block; margin: 10px 0;"> <button style="width: 100%;height: 50px; font-size: large;">前往授权此网站</button></a>', '抱歉`(*>﹏<*)′需要您的授权', {
               dangerouslyUseHTMLString: true,
               confirmButtonText: '好的，我已点击',
             });

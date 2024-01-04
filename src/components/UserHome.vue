@@ -8,7 +8,7 @@ export default {
     return {
       postUrl: this.$httpUrl,
       // imageUrl: this.$httpUrl + '/static/img/Background.jpg',
-      imageUrl: './Background.jpg',
+      imageUrl: require('../assets/img/Background.jpg'),
       centerDialogVisible: false,
       user: JSON.parse(sessionStorage.getItem('CurUser')),
       loading: false,

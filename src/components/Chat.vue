@@ -8,7 +8,7 @@ export default {
   data() {
     return {
       circleUrl: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
-      chatBack: './chatBack.jpg',
+      chatBack: require('../assets/img/chatBack.jpg'),
       user: JSON.parse(sessionStorage.getItem('CurUser')),
       isCollapse: false,
       users: [],
@@ -217,7 +217,8 @@ export default {
               {{ chatUser?(chatUser): "请选择用户" }}
             </div>
             <el-divider></el-divider>
-            <div ref="scrollDiv" style="height: 68vh; width: 75%; overflow:auto; margin-bottom: 10px;" :style="{ 'background-image': 'url(' + this.chatBack + ')'}"
+<!--            :style="{ 'background-image': 'url(' + this.chatBack + ')'}"-->
+            <div ref="scrollDiv" style="height: 68vh; width: 75%; overflow:auto; margin-bottom: 10px;"
                  v-html="content"></div>
             <div style="width: 100%; display: flex; justify-items: center; justify-content: center;">
               <el-input v-model="text" :autosize="{ minRows: 2, maxRows: 3}" placeholder="请输入内容" resize="none"
