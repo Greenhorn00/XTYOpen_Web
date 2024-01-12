@@ -6,6 +6,16 @@ export default {
     return{
       drawer:false,
       postUrl: this.$httpUrl,
+      sizeGB: 0,
+      sizeT: 0,
+      sizeFull: false,
+      customColors: [
+        {color: '#0c9600', percentage: 20},
+        {color: '#005b00', percentage: 40},
+        {color: '#984747', percentage: 60},
+        {color: '#bd3434', percentage: 80},
+        {color: '#ce0000', percentage: 100}
+      ],
       user: JSON.parse(sessionStorage.getItem('CurUser')),
       FileList: [ //已转动态加载
         // {
@@ -21,7 +31,10 @@ export default {
     fileGet() {
       this.$axios.get(this.$httpUrl + '/files/list?userId=' + this.user.id).then(res => res.data).then(res => {
         if (res.code === 200) {
-          this.FileList = res.data;
+          this.FileList = res.data.list;
+          this.sizeGB = res.data.size;
+          this.sizeT = this.sizeGB/0.05 > 100 ? 100 : this.sizeGB/0.05;
+          if (this.sizeGB/0.05 >= 100) this.sizeFull = true;
         } else {
           this.$message({
             showClose: true,
@@ -73,6 +86,9 @@ export default {
         });
       }
     },
+    format(percentage) {
+      return percentage >= 100 ? '满' : `${percentage.toFixed(0)}%`;
+    },
   },
   created() {
     this.fileGet();
@@ -83,16 +99,25 @@ export default {
 <template>
 <div>
 
-  <el-button class="floating-button" icon="el-icon-upload" type="primary" @click="drawer=true;">上传</el-button>
+  <el-button class="floating-button" icon="el-icon-upload" type="primary" @click="drawer=true;" :disabled="sizeFull">上传</el-button>
   <el-empty v-if="FileList.length === 0">
     <el-button type="success" @click="drawer=true;">上传文件 !</el-button>
   </el-empty>
   <div style="height: 80vh; overflow-y: auto;" v-if="FileList.length !== 0">
+    <div style="display: flex;justify-content: start;align-items: center; margin-left: 2.5vw;margin-top: 10px;">
+      <div style="display: flex;">
+        已用空间：
+        <el-progress :percentage=sizeT :format="format" :color="customColors" :stroke-width="20" style="width: 180px;"></el-progress>
+      </div>
+      <div style="color: #9a9a9a">
+        您的云盘上限为 7GB
+      </div>
+    </div>
     <el-table
         :data="FileList"
         :header-cell-style="{ background:'#F0F0F0', color:'#000'}"
         border
-        style="width: 95%; margin: 20px auto; box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);">
+        style="width: 95%; margin: 10px auto; box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);">
       <el-table-column label="文件名" prop="name">
 
       </el-table-column>

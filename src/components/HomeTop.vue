@@ -7,9 +7,23 @@ export default {
       i:1,
     }
   },
+  methods: {
+    setH2() {
+      requestAnimationFrame(() => {
+        let text = document.getElementById('text');
+        let value = window.scrollY;
+        text.style.marginBottom = value * 1.2 + 'px';
+      });
+    }
+  },
+  mounted() {
+    window.addEventListener('scroll', this.setH2);
+  },
+  beforeDestroy() {
+    window.removeEventListener('scroll', this.setH2);
+  }
 }
 </script>
-
 <template>
   <div>
     <div class="banner">
