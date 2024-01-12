@@ -8,6 +8,7 @@ export default {
       postId:'',
       PostMain:[],
       isMobile: false,
+      isVisible: false, //回到顶部
       user:'',
 
     }
@@ -19,6 +20,8 @@ export default {
   created() {
     this.postId = this.$route.params.postId;
     // 使用postId做一些事情
+
+    window.addEventListener('scroll', this.handleScroll);//滚动至顶部
   },
   methods:{
     loadPost() {
@@ -112,6 +115,17 @@ export default {
     checkIfMobile() {
       this.isMobile = window.innerWidth < 768; // Adjust the value based on your requirements
     },
+
+    //滚动到顶部
+    handleScroll() {
+      this.isVisible = window.scrollY > 100; // 设置一个阈值，当页面滚动超过100像素时显示按钮
+    },
+    scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth' // 平滑滚动到顶部
+      });
+    },
   },
   mounted() {
     this.checkIfMobile();
@@ -122,7 +136,9 @@ export default {
 
 <template>
   <div>
-    <el-page-header style="height: 50px; align-items: center; margin-left: 2vw; margin-top: 3vw;" @back="goBack" content="帖子详情">
+    <el-button v-if="isVisible" circle class="scroll-to-top" type="success" icon="el-icon-top" @click="scrollToTop"></el-button>
+
+    <el-page-header style="height: 25px; align-items: center; margin-left: 1vw; margin-top: 1vw;" @back="goBack" content="详情">
     </el-page-header>
 
 
@@ -197,12 +213,28 @@ export default {
   .text2{
     font-size: 1.2vw;
   }
+
+  .scroll-to-top {
+    position: fixed;
+    bottom: 30px;
+    margin-left: 20px;
+    font-size: 25px;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+  }
 }
 @media (min-width: 0px) and (max-width:768px){
   .text2{
     font-size: 1.2vw;
     position: relative;
     left: 20px;
+  }
+
+  .scroll-to-top {
+    position: fixed;
+    bottom: 30px;
+    margin-left: 10px;
+    font-size: 10px;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
   }
 }
 </style>

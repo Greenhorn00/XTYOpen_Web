@@ -28,7 +28,7 @@ export default {
       </div>
     </div>
     <section>
-      <h2 class="wow fadeInRightBig" >XTYOpen open source website</h2>
+      <h2 class="wow fadeInRightBig" >XTY-Open source learning website</h2>
       <p class="wow bounceInLeft">
         This website is created by VUE+Springboot. Due to limited technology, there are many areas for improvement. If you have any good suggestions, you can add my WeChat account: x1522345857 for discussion and learning. Thank you for the correction and guidance. I hope every full stack has learned something, thank you.
       </p>

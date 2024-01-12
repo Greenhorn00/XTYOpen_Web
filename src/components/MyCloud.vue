@@ -87,7 +87,7 @@ export default {
   <el-empty v-if="FileList.length === 0">
     <el-button type="success" @click="drawer=true;">上传文件 !</el-button>
   </el-empty>
-  <div style="height: 80vh;" v-if="FileList.length !== 0">
+  <div style="height: 80vh; overflow-y: auto;" v-if="FileList.length !== 0">
     <el-table
         :data="FileList"
         :header-cell-style="{ background:'#F0F0F0', color:'#000'}"
@@ -96,7 +96,7 @@ export default {
       <el-table-column label="文件名" prop="name">
 
       </el-table-column>
-      <el-table-column label="路径" prop="file" >
+      <el-table-column label="下载路径" prop="file" >
       </el-table-column>
       <el-table-column label="操作" prop="operate" >
         <template slot-scope="scope">
@@ -109,18 +109,19 @@ export default {
     </el-table>
   </div>
 
-  <el-dialog :visible.sync="drawer">
-    <el-upload
-        :action="`${this.postUrl}/files/up/${this.user.id}`"
-        :on-change="handleChange"
-        multiple
-        drag
-        style=" margin: auto;">
-      <i class="el-icon-upload" ></i>
-      <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-    </el-upload>
+  <el-dialog :visible.sync="drawer" center title="上传文件">
+    <div style="text-align: center;">
+      <el-upload
+          :action="`${this.postUrl}/files/up/${this.user.id}`"
+          :on-change="handleChange"
+          multiple
+          drag>
+        <i class="el-icon-upload" ></i>
+        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+      </el-upload>
+    </div>
     <div slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="drawer = false">确 定</el-button>
+      <el-button type="primary" @click="drawer = false">好的</el-button>
     </div>
   </el-dialog>
 </div>
@@ -134,5 +135,12 @@ export default {
   margin-left: 20px;
   font-size: 16px;
   box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+}
+/deep/ .el-upload{
+  width: 100%;
+}
+/deep/ .el-upload .el-upload-dragger{
+  width: 100%;
+  height: 200px;
 }
 </style>

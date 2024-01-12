@@ -228,7 +228,7 @@ export default {
 
   .scroll-to-top {
     position: fixed;
-    bottom: 90px;
+    bottom: 30px;
     margin-left: 20px;
     font-size: 25px;
     box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
@@ -249,7 +249,7 @@ export default {
 
   .scroll-to-top {
     position: fixed;
-    bottom: 80px;
+    bottom: 30px;
     margin-left: 10px;
     font-size: 10px;
     box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);

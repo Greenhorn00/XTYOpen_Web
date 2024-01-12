@@ -12,7 +12,7 @@ export default {
       centerDialogVisible: false,
       user: JSON.parse(sessionStorage.getItem('CurUser')),
       loading: false,
-      deadline5: new Date("2024-01-06"),
+      deadline5: new Date("2024-03-02"),
       colors: [
         {color: '#f56c6c', percentage: 20},
         {color: '#e6a23c', percentage: 40},
@@ -248,14 +248,14 @@ export default {
                 :value="deadline5"
                 format="DD天HH小时mm分钟"
                 time-indices
-                title="🚩距离放假还有："
+                title="🚩距离开学还有："
             >
             </el-statistic>
           </el-descriptions-item>
         </el-descriptions>
 
         <div class="upload-demo"
-             style="text-align: center;width: 400px; margin-left: 50px; box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1)">
+             style="text-align: center;width: 400px; height: 320px; margin-left: 50px; position: relative; top: -15px;  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1)">
           <h2 style="font-size: 16px; font-weight: normal; margin: 15px;  text-shadow: 0 0 5px #6dacfd, 0 0 10px #e1eaff; ">
             更新头像</h2>
           <el-upload
@@ -267,7 +267,7 @@ export default {
               multiple
               style="margin-bottom: 15px;">
             <i class="el-icon-upload"></i>
-            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+            <div class="el-upload__text">将图片拖到此处，或<em>点击上传</em></div>
           </el-upload>
         </div>
 
@@ -326,7 +326,7 @@ export default {
   }
 
   .upload-demo {
-    transform: scale(0.9);
+    transform: scale(1);
   }
 
 }
@@ -340,5 +340,12 @@ export default {
     transform: scale(0.8);
   }
 
+}
+/deep/ .el-upload{
+  width: 100%;
+}
+/deep/ .el-upload .el-upload-dragger{
+  width: 100%;
+  height: 240px;
 }
 </style>

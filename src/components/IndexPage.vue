@@ -2,7 +2,6 @@
 
 import Aside from "@/components/Aside.vue";
 import Header from "@/components/Header.vue";
-
 export default {
   name:"IndexPage",
   components: {Header, Aside},
@@ -25,7 +24,7 @@ export default {
         this.aside_width='64px'
         this.icon="el-icon-s-unfold"
       }
-    }
+    },
   }
 };
 </script>
