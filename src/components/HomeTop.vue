@@ -58,7 +58,7 @@ export default {
   font-family: 'Poppins', sans-serif;
 }
 
-@media (min-width: 992px){
+@media (min-width: 768px){
   .banner
   {
     position: relative;
@@ -152,9 +152,8 @@ export default {
   }
 
   section {
-
     position: relative;
-    padding: 40px 80px;
+    padding: 20px 10px;
     font-size: 12px;
   }
 

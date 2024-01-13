@@ -178,8 +178,7 @@ export default {
     <div style="display: flex;flex-direction: column;
   justify-content: center;
   align-items: center;">
-      <el-row :gutter="20"
-              style="width: 84%; height: 70px; margin-top: 10px;padding: 10px; position: relative; left: 2%; box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1)">
+      <el-row :gutter="20" class="userRow">
         <el-col :span="6">
           <div>
             <el-statistic
@@ -219,7 +218,7 @@ export default {
       </el-row>
       <div style="display: flex; justify-content:  space-around; align-items: center; flex-wrap: wrap;">
         <div>
-          <el-descriptions :column="3" direction="vertical" style=" max-width: 500px; min-width: 350px;  margin: 30px 70px; padding: 20px 20px; box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1)"
+          <el-descriptions :column="3" direction="vertical" class="userContent"
                            title="个人信息">
             <el-descriptions-item label="账号">{{ this.user.no }}</el-descriptions-item>
             <el-descriptions-item label="用户名">{{ this.user.name }}</el-descriptions-item>
@@ -254,8 +253,7 @@ export default {
           </el-descriptions-item>
         </el-descriptions>
 
-        <div class="upload-demo"
-             style="text-align: center;width: 400px; height: 320px; margin-left: 50px; position: relative; top: -15px;  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1)">
+        <div class="upload-demo">
           <h2 style="font-size: 16px; font-weight: normal; margin: 15px;  text-shadow: 0 0 5px #6dacfd, 0 0 10px #e1eaff; ">
             更新头像</h2>
           <el-upload
@@ -324,9 +322,32 @@ export default {
   .dengJi {
     transform: scale(0.9);
   }
+  .userRow{
+    width: 84%;
+    height: 70px;
+    margin-top: 10px;
+    padding: 10px;
+    position: relative;
+    left: 2%;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1)
+  }
+
+  .userContent{
+    max-width: 500px;
+    min-width: 350px;
+    margin: 30px 70px;
+    padding: 20px 20px;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1)
+  }
 
   .upload-demo {
-    transform: scale(1);
+    text-align: center;
+    width: 400px;
+    height: 320px;
+    margin-left: 50px;
+    position: relative;
+    top: -15px;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1)
   }
 
 }
@@ -336,8 +357,27 @@ export default {
     transform: scale(0.7);
   }
 
+  .userRow{
+    width: 100%;
+    height: 70px;
+    padding: 10px;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1)
+  }
+
+  .userContent{
+    width: 100%;
+    height: 320px;
+    margin: 5px 0;
+    padding: 15px 15px;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1)
+  }
+
   .upload-demo {
-    transform: scale(0.8);
+    text-align: center;
+    width: 300px;
+    height: 320px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1)
   }
 
 }

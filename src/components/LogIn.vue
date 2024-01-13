@@ -516,17 +516,16 @@ export default {
   .loginOutLine {
     display: flex;
     justify-content: center;
-
+    width: 90%;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 700px;
   }
 
   .loginOut {
     opacity: 1;
-    width: 400px;
+    width: 100%;
     padding: 50px 15px;
     background: #ffffffc1;
     box-shadow: 0 15px 20px rgba(0, 0, 0, .1);

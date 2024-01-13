@@ -313,7 +313,8 @@ export default {
     <el-button v-if="isVisible" circle class="scroll-to-top" icon="el-icon-top" @click="scrollToTop"></el-button>
 
     <div style="display: flex;  flex-direction:column; justify-content: center;">
-      <el-carousel :interval="4000" height="300px" style="margin-top: 10px; margin-bottom: 20px;" type="card">
+<!--      轮播图-->
+      <el-carousel v-if="!isMobile" :interval="4000" height="300px" style="margin-top: 10px; margin-bottom: 20px;" type="card">
         <el-carousel-item v-for="(item, index) in srcList" :key="index"
                           style="display: flex; justify-content: center; align-items: center;">
           <el-image
@@ -324,6 +325,7 @@ export default {
           </el-image>
         </el-carousel-item>
       </el-carousel>
+<!--      查询-->
       <div style="display: flex; justify-content: center;">
         <el-input
             v-model="text"
@@ -334,24 +336,29 @@ export default {
         <el-button circle icon="el-icon-search" style="margin-left: 10px;" @click="loadPost"></el-button>
         <el-button circle icon="el-icon-refresh-left" type="info" @click="restParam"></el-button>
       </div>
-
+<!--      帖子卡片-->
       <div style="display: flex; flex-direction:column;   align-items: center; margin-top: 30px;">
-        <el-card v-for="(item,i) in tableData" :key="i" class="box-card"
-                 style="width: 60%; min-height: 16vw; margin: 20px;">
+        <el-card v-for="(item,i) in tableData" :key="i" class="box-card">
           <div @click="goToPost(item.post.id)">
-            <div style="display: flex; align-items: center; justify-content: start;margin-top: 0.2vw; margin-bottom: 2vw;">
-              <span class="text2" style="padding-left: 0.5vw;">{{ item.post.title }}</span>
-            </div>
-            <div style="display: flex; justify-content:space-between;height: 14vw;">
-              <div class="text item" style=" padding-left:0.5vw; min-height: 18px; max-height: 90%; width: 40%;">
 
+            <div class="cardHead" v-if="!isMobile" style="display: flex; align-items: center; justify-content: start;">
+              <span class="text2">{{ item.post.title }}</span>
+            </div>
+
+            <div class="cardCenter">
+              <div class="text item" v-if="!isMobile" style=" padding-left:0.5vw; min-height: 18px; max-height: 90%; width: 40%;" >
                 <div class="ql-editor" v-html="item.post.name" v-highlight></div>
-<!--                {{ item.post.name | truncate(200) }}-->
               </div>
-              <el-image :src="item.Img ? item.Img : require('../assets/img/homeB.jpg')" style="width: 40%;height: 15vw;position: relative;top: -2vw;">
+
+              <div class="cardHead" v-if="isMobile" style="display: flex; justify-content: start;">
+                <span class="text2">{{ item.post.title }}</span>
+              </div>
+
+              <el-image class="postImg" :src="item.Img ? item.Img : require('../assets/img/homeB.jpg')">
               </el-image>
             </div>
-            <div style="display: flex; justify-content:space-between;">
+
+            <div class="control1">
               <div style="display: flex;align-items: center;">
                 <el-avatar :size="30" :src="item.post.avatar" style="margin: 0px 5px;">{{
                     item.post.userno.charAt(0)
@@ -368,8 +375,7 @@ export default {
                              @click="copy(item.post.name)"></el-button>
                 </div>
               </div>
-
-              <div style="font-weight: 10; font-size: 0.8vw;position: relative;top: 0.6vw;">
+              <div class="text3" >
                 {{ new Date(item.post.time).getMonth() + 1 }}/{{ new Date(item.post.time).getDate() }}
                 {{ new Date(item.post.time).getHours() }}:{{ new Date(item.post.time).getMinutes() }}
               </div>
@@ -392,15 +398,6 @@ export default {
             <el-input v-model="form.title" style="font-size: 20px; font-weight: bold" placeholder="请输入标题" type="textarea"></el-input>
           </el-col>
         </el-form-item>
-<!--        <el-form-item label="正文" prop="name">
-          <el-col :span="20">
-            <el-input v-model="form.name"
-                      :autosize="{ minRows: 8, maxRows: 12}"
-                      placeholder="请输入正文"
-                      style="font-size: 20px;"
-                      type="textarea"></el-input>
-          </el-col>
-        </el-form-item>-->
       </el-form>
       <el-row v-loading="quillUpdateImg">
         <quill-editor ref="myQuillEditor" v-model="form.name" :options="editorOption">
@@ -426,13 +423,6 @@ export default {
 
 <style scoped>
 
-.text {
-  font-size: 0.9vw;
-  ::-webkit-scrollbar {
-    /*隐藏滚轮*/
-    display: none;
-  }
-}
 .editor {
   line-height: normal !important;
   height: 800px;
@@ -495,6 +485,30 @@ export default {
 
 
 @media (min-width: 768px) {
+  .text {
+    font-size: 0.9vw;
+    ::-webkit-scrollbar {
+      /*隐藏滚轮*/
+      display: none;
+    }
+  }
+  .text3{
+    font-size: 0.8vw;
+    font-weight: 10; position: relative;top: 0.6vw;
+  }
+  .control1{
+    display: flex; justify-content:space-between;
+  }
+  .cardHead{
+    margin-top: 0.2vw;
+    margin-bottom: 2vw;
+    align-items: center;
+  }
+
+  .cardCenter{
+    display: flex; justify-content:space-between;height: 14vw;
+  }
+
   .quill-editor {
     width: 90%;
     margin: 0 auto;
@@ -505,8 +519,16 @@ export default {
     height: 100%;
   }
 
+  .postImg{
+    width: 40%;height: 15vw;position: relative;top: -2vw;
+  }
+
   .text2 {
     font-size: 1.3vw;
+    padding-left: 0.5vw;
+  }
+  .box-card{
+    width: 60%; min-height: 16vw; margin: 20px;
   }
 
   .floating-button {
@@ -514,6 +536,7 @@ export default {
     bottom: 30px;
     margin-left: 20px;
     font-size: 25px;
+    z-index: 1000;
     box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
   }
 
@@ -522,19 +545,66 @@ export default {
     bottom: 90px;
     margin-left: 20px;
     font-size: 25px;
+    z-index: 1000;
     box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
   }
 }
 
 @media (min-width: 0px) and (max-width: 768px) {
+  .cardHead{
+    align-items: start;
+    width: 50%;
+  }
+
   .imgs {
     height: 50%;
   }
+  .postImg{
+    width: 50%;height: 100%;
+  }
+
+  .cardCenter{
+    margin-top: 5px;
+    display: flex; justify-content:space-between;
+    height: 120px;
+  }
+
+  .text {
+    font-size: 12px;
+    ::-webkit-scrollbar {
+      /*隐藏滚轮*/
+      display: none;
+    }
+  }
 
   .text2 {
-    font-size: 1.2vw;
+    font-size: 16px;
     position: relative;
-    left: 20px;
+    margin-bottom: 10px;
+
+  }
+  .text3{
+    font-size: 18px;
+    font-weight: 10;
+    white-space: nowrap;
+    margin-left: 10px;
+  }
+
+  .control1{
+    flex: 1; /* 让它占据剩余的空间 */
+    transform: scale(0.9);
+    margin-top: 10px;
+    display: flex; justify-content:start;
+    align-items: center;
+    position: relative;
+    left: -20px;
+  }
+
+  .box-card{
+    width: 90%; min-height: 16vw; margin: 10px; padding: 0;
+  }
+  /deep/ .el-card__body{
+    padding: 10px;
   }
 
   .floating-button {
@@ -542,6 +612,7 @@ export default {
     bottom: 30px;
     margin-left: 10px;
     font-size: 10px;
+    z-index: 1000;
     box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
   }
 
@@ -550,6 +621,7 @@ export default {
     bottom: 80px;
     margin-left: 10px;
     font-size: 10px;
+    z-index: 1000;
     box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
   }
 }

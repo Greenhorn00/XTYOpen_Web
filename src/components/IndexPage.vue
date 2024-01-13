@@ -2,15 +2,21 @@
 
 import Aside from "@/components/Aside.vue";
 import Header from "@/components/Header.vue";
+import HeaderMobile from "@/components/HeaderMobile.vue";
 export default {
   name:"IndexPage",
-  components: {Header, Aside},
+  components: {HeaderMobile, Header, Aside},
   data(){
     return{
       isCollapse:true,
+      isMobile: false, //手机端
       aside_width:'64px',//200px
       icon:"el-icon-s-unfold"
     }
+  },
+  mounted() {
+    this.checkIfMobile();
+    window.addEventListener('resize', this.checkIfMobile);
   },
   methods:{
     doCollapse(){
@@ -25,20 +31,25 @@ export default {
         this.icon="el-icon-s-unfold"
       }
     },
+    //检查手机
+    checkIfMobile() {
+      this.isMobile = window.innerWidth < 768; // Adjust the value based on your requirements
+    },
   }
 };
 </script>
 
 <template>
   <el-container style="height: 100%; border: 1px solid #eee; ">
-    <el-aside width="aside_width" style="background-color: rgb(238, 241, 246); margin-left: -1px">
+    <el-aside width="aside_width" style="background-color: rgb(238, 241, 246); margin-left: -1px" v-if="!this.isMobile">
       <Aside :isCollapse="isCollapse"></Aside>
     </el-aside>
 
     <el-container style="height: 100%;">
-      <el-header style="text-align: right; font-size: 12px; height: 100%; background-color: #dadada; box-shadow: 0 0 5px #dadada, 0 0 10px #777777;">
+      <el-header v-if="!this.isMobile" style="text-align: right; font-size: 12px; height: 100%; background-color: #dadada; box-shadow: 0 0 5px #dadada, 0 0 10px #777777;">
         <Header @doCollapse = "doCollapse" :icon="icon"></Header>
       </el-header>
+      <HeaderMobile v-if="this.isMobile"></HeaderMobile>
 
       <el-main style="height: 100%;">
 <!--        <Main></Main>-->

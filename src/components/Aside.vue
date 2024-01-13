@@ -73,19 +73,19 @@ export default {
       <span slot="title">个人中心</span>
     </el-menu-item>
 
-<!--    <el-submenu >-->
-<!--      <template slot="title"><i class="el-icon-user-solid"></i><span>个人</span></template>-->
-<!--      <el-menu-item-group>-->
-<!--        <el-menu-item index="/Chat">-->
-<!--          <i class="el-icon-chat-line-round"></i>-->
-<!--          <span slot="title">聊天室</span>-->
-<!--        </el-menu-item>-->
-<!--        <el-menu-item index="/UserHome">-->
-<!--          <i class="el-icon-s-custom"></i>-->
-<!--          <span slot="title">个人中心</span>-->
-<!--        </el-menu-item>-->
-<!--      </el-menu-item-group>-->
-<!--    </el-submenu>-->
+    <el-submenu >
+      <template slot="title"><i class="el-icon-user-solid"></i><span>个人</span></template>
+      <el-menu-item-group>
+        <el-menu-item index="/Chat">
+          <i class="el-icon-chat-line-round"></i>
+          <span slot="title">聊天室</span>
+        </el-menu-item>
+        <el-menu-item index="/UserHome">
+          <i class="el-icon-s-custom"></i>
+          <span slot="title">个人中心</span>
+        </el-menu-item>
+      </el-menu-item-group>
+    </el-submenu>
 
     <el-menu-item @click="logOut">
       <i class="el-icon-switch-button"></i>
