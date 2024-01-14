@@ -85,12 +85,6 @@ export default {
       this.$axios.get(this.$httpUrl + '/music/list?userId=' + this.user.id).then(res => res.data).then(res => {
         if (res.code === 200) {
           this.musicList = res.data;
-          this.$notify({
-            title: "音乐加载成功",
-            message: '~来听听歌叭~',
-            position: 'bottom-left',
-            type: 'success'
-          });
         } else {
           this.$notify({
             title: "音乐加载失败",

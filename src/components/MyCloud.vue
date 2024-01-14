@@ -9,6 +9,7 @@ export default {
       sizeGB: 0,
       sizeT: 0,
       sizeFull: false,
+      isMobile: false,
       customColors: [
         {color: '#0c9600', percentage: 20},
         {color: '#005b00', percentage: 40},
@@ -86,12 +87,19 @@ export default {
         });
       }
     },
+    checkIfMobile() {
+      this.isMobile = window.innerWidth < 768; // Adjust the value based on your requirements
+    },
     format(percentage) {
       return percentage >= 100 ? '满' : `${percentage.toFixed(0)}%`;
     },
   },
   created() {
     this.fileGet();
+  },
+  mounted() {
+    this.checkIfMobile();
+    window.addEventListener('resize', this.checkIfMobile);
   },
 }
 </script>
@@ -107,7 +115,7 @@ export default {
     <div style="display: flex;justify-content: start;align-items: center; margin-left: 2.5vw;margin-top: 10px;">
       <div style="display: flex;">
         已用空间：
-        <el-progress :percentage=sizeT :format="format" :color="customColors" :stroke-width="20" style="width: 180px;"></el-progress>
+        <el-progress :percentage=sizeT :format="format" :color="customColors" :stroke-width=20 style="width: 180px;"></el-progress>
       </div>
       <div style="color: #9a9a9a">
         您的云盘上限为 7GB
@@ -128,13 +136,13 @@ export default {
           <a :href="scope.row.file" :download="scope.row.name" target="_blank">
             <el-button type="primary" slot="reference" icon="el-icon-download" style="margin-left: 10px;">下载</el-button>
           </a>
-          <el-button slot="reference" icon="el-icon-delete-solid" type="danger" @click="fileDel(scope.row.file)" style=" margin-left: 10px;"></el-button>
+          <el-button slot="reference" icon="el-icon-delete-solid" type="danger" @click="fileDel(scope.row.file)" style=" margin-left: 10px;">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
   </div>
 
-  <el-dialog :visible.sync="drawer" center title="上传文件">
+  <el-dialog :visible.sync="drawer" center title="上传文件" :fullscreen=isMobile>
     <div style="text-align: center;">
       <el-upload
           :action="`${this.postUrl}/files/up/${this.user.id}`"

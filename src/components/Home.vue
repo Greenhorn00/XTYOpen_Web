@@ -388,6 +388,7 @@ export default {
     <el-dialog
         :before-close="handleClose"
         :visible.sync="centerDialogVisible"
+        :fullscreen=isMobile
         center
         title="发表"
         width="80%"

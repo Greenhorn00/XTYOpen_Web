@@ -19,24 +19,12 @@ export default {
   },
   methods: {
     logOut() {
-      console.log('退出')
-      this.$confirm('要退出了吗', '提示', {
-        confirmButtonText: "好的",
-        type: 'warning',
-        center: true,
-        closeOnClickModal: true
-      }).then(() => {
-        this.$notify({
-          title: this.user.name,
-          message: '您已退出登陆',
-        });
-        this.$router.replace('/')
-        sessionStorage.clear()
-      }).catch(() => {
-
-      })
+      this.$notify({
+        title: '您已退出登陆',
+      });
+      this.$router.replace('/')
+      sessionStorage.clear()
     },
-
   },
 };
 </script>
@@ -55,14 +43,14 @@ export default {
       </el-menu-item>
       <el-menu-item index="/UserHome">
         <i class="el-icon-s-custom"></i>
-        <span slot="title">个人中心</span>
+        <span slot="title">我的主页</span>
       </el-menu-item>
       <el-submenu >
         <template slot="title"><i class="el-icon-help"></i><span>更多</span></template>
         <el-menu-item-group>
-          <el-menu-item index="/Chat">
+          <el-menu-item index="/ChatMobile">
             <i class="el-icon-chat-line-round"></i>
-            <span slot="title">聊天室</span>
+            <span slot="title">聊天</span>
           </el-menu-item>
           <!--动态菜单-->
           <el-menu-item v-for="(item,i) in menu" :key="i"
@@ -71,6 +59,10 @@ export default {
             <span slot="title">{{ item.menuName }}</span>
           </el-menu-item>
         </el-menu-item-group>
+        <el-menu-item @click="logOut">
+          <i class="el-icon-switch-button"></i>
+          <span slot="title">退出登陆</span>
+        </el-menu-item>
       </el-submenu>
     </el-menu>
   </div>
@@ -78,8 +70,9 @@ export default {
 
 <style scoped>
 .el-menu-demo{
-  position: sticky;
+  position: fixed;
   top: 0;
+  width: 100%;
   z-index: 1000; /* 根据实际情况调整 z-index */
 }
 </style>

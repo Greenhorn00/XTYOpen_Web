@@ -4,7 +4,7 @@
 let socket;
 
 export default {
-  name: "Chat",
+  name: "ChatMobile",
   data() {
     return {
       circleUrl: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
@@ -87,33 +87,32 @@ export default {
       let html
       // 当前用户消息
       if (nowUser) { // nowUser 表示是否显示当前用户发送的聊天消息，绿色气泡
-        html = "<div class=\"el-row\" style=\"padding: 5px 0\">\n" +
-            "  <div class=\"el-col el-col-22\" style=\"text-align: right; padding-right: 10px\">\n" +
+        html = "<div class=\"el-row\" style=\"padding: 5px 0; margin-right: 5px;\">\n" +
+            "  <div class=\"el-col el-col-22\" style=\"text-align: right; padding-right: 5px\">\n" +
             "    <div style=\"color: white; text-align: center; border-radius: 10px; font-family: sans-serif;" +
-            " padding: 10px; width:auto; max-width: 25vw; word-wrap: break-word; display:inline-block !important; box-shadow: 0 5px 20px 1px rgba(0, 0, 0, 0.3);" +
+            " padding: 5px; width:auto; max-width: 50vw; word-wrap: break-word; display:inline-block !important; box-shadow: 0 5px 20px 1px rgba(0, 0, 0, 0.3);" +
             " background-color: forestgreen;\">" + text + "</div>\n" +
             "  </div>\n" +
             "  <div class=\"el-col el-col-2\">\n" +
-            "  <span class=\"el-avatar el-avatar--circle\" style=\"height: 40px; width: 40px; line-height: 40px;\">\n" +
+            "  <span class=\"el-avatar el-avatar--circle\" style=\"height: 30px; width: 30px; line-height: 40px;\">\n" +
             "    <img src=\"" + nowUser + "\" style=\"object-fit: cover;\">\n" +
             "  </span>\n" +
             "  </div>\n" +
             "</div>";
       } else if (remoteUser) {   // remoteUser表示远程用户聊天消息，蓝色的气泡
-        html = "<div class=\"el-row\" style=\"padding: 5px 0\">\n" +
+        html = "<div class=\"el-row\" style=\"padding: 5px 0;\">\n" +
             "  <div class=\"el-col el-col-2\" style=\"text-align: right\">\n" +
-            "  <span class=\"el-avatar el-avatar--circle\" style=\"height: 40px; width: 40px; line-height: 40px;\">\n" +
+            "  <span class=\"el-avatar el-avatar--circle\" style=\"height: 30px; width: 30px; line-height: 40px;\">\n" +
             "    <img src=\"" + remoteUser + "\" style=\"object-fit: cover;\">\n" +
             "  </span>\n" +
             "  </div>\n" +
             "  <div class=\"el-col el-col-22\" style=\" text-align: left; padding-left: 10px\">\n" +
             "    <div style=\"color: white; text-align: center; border-radius: 10px; font-family: sans-serif;" +
-            " padding: 10px; width:auto; max-width: 25vw; word-wrap: break-word; display:inline-block !important; box-shadow: 0 5px 20px 1px rgba(0, 0, 0, 0.3);" +
+            " padding: 5px; width:auto; max-width: 50vw; word-wrap: break-word; display:inline-block !important; box-shadow: 0 5px 20px 1px rgba(0, 0, 0, 0.3);" +
             " background-color: deepskyblue;\">" + text + "</div>\n" +
             "  </div>\n" +
             "</div>";
       }
-      console.log(html)
       this.content += html;
       //下两行为滚动scrollDiv(refs上)到最下面
       this.$nextTick(() => {
@@ -184,49 +183,41 @@ export default {
 
 <template>
     <div>
-      <el-row style="display: flex; justify-content: space-between; min-height: 94vh;">
-        <el-col :span="4">
-          <el-card style=" height: 100%; overflow-y: auto; color: #333">
-            <div style="padding-bottom: 10px; border-bottom: 1px solid #ccc">
+      <el-row style="display: flex; justify-content: space-between; height: calc(100vh - 70px);">
+        <el-col :span="4" style="margin-right: 5px;">
+          <el-card style="height: 100%; background-color: #f3f3f3; overflow-y: auto; color: #333">
+            <div style="text-align: center;">
+              <el-avatar :size="40" :src="this.user.avatar">我</el-avatar>
             </div>
-            <el-button style="width: 100%; padding: 10px 0;margin-top: 10px;" :disabled="true">
-              <el-avatar :size="40" :src="this.user.avatar" style="margin-right: 12px;">我</el-avatar>
-              <span style="font-size: 1.1vw; position:relative; top: -12px;">{{ this.user.name }}</span>
-            </el-button>
-            <div v-for="user in users" :key="user.username" style="padding: 10px 0; text-align: center;" @click="history(user.username)">
+            <div v-for="user in users" :key="user.username" style="padding: 5px 0; text-align: center;" @click="history(user.username)">
 <!--              badge新消息气泡-->
               <el-badge :value="user.newMessage" :max="10" :hidden="user.newMessage===0" style="width: 100%;">
-                <el-button style="width: 100%;">
-                  <el-avatar :size="40" :src="user.avatar" style="margin-right: 12px;">
-                    {{ user.username.charAt(0) }}
-                  </el-avatar>
-                  <span v-if="user.username !== chatUser" style="font-size: 1.1vw; position:relative; top: -12px;">{{ user.name }}</span>
-                  <span v-if="user.username === chatUser" style="font-size: 1.1vw; font-weight: bold; color: limegreen; position:relative; top: -12px;">{{ user.name }}</span>
-                  <el-tooltip class="item" effect="dark" content="在线用户" placement="right">
-                    <i v-if="user.online===1" class="el-icon-connection el-icon--right" style="position: relative; top: -12px;"></i>
-                  </el-tooltip>
-                </el-button>
+                <el-avatar :size="40" :src="user.avatar" >
+                  {{ user.username.charAt(0) }}
+                </el-avatar>
               </el-badge>
             </div>
           </el-card>
         </el-col>
 
         <el-col :span="24">
-          <div :style="{ 'background-image': 'url(' + this.chatBack + ')'}" style="height: 100%;display: flex; align-items: center; flex-direction: column;">
-            <div style="text-align: center; line-height: 50px; font-size: large; font-weight: bold; margin-bottom: -20px;">
+          <div style="height: 100%; display: flex; align-items: center; flex-direction: column;">
+            <div style="text-align: center; line-height: 30px; font-size: large; font-weight: bold; margin-bottom: 10px;">
               {{ chatUser?(chatUser): "请选择用户" }}
             </div>
-            <el-divider></el-divider>
 <!--            :style="{ 'background-image': 'url(' + this.chatBack + ')'}"-->
-            <div ref="scrollDiv" style="height: 68vh; width: 75%; overflow:auto; margin-bottom: 10px;"
+            <div ref="scrollDiv" style="height: 68vh; width: 100%; overflow:auto; margin-bottom: 10px;"
                  v-html="content"></div>
-            <div style="width: 100%; display: flex; justify-items: center; justify-content: center;">
-              <el-input v-model="text" :autosize="{ minRows: 2, maxRows: 3}" placeholder="请输入内容" resize="none"
-                        show-word-limit
-                        style="width: 35%;font-size: large;"
-                        type="textarea" @keyup.enter.native="send"></el-input>
-              <el-button size="medium" type="primary" class="sendButton" @click="send" style="font-size: 1em; border-radius: 0 20px 20px 0; box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.3);">发送</el-button>
+            <div style="position: fixed;bottom: 30px;">
+              <div style="width: 100%; display: flex; justify-items: center; justify-content: center;">
+                <el-input v-model="text" :autosize="{ minRows: 2, maxRows: 3}" placeholder="消息" resize="none"
+                          show-word-limit
+                          style="width: 70%;font-size: medium;"
+                          type="textarea" @keyup.enter.native="send"></el-input>
+                <el-button size="mini" type="primary" class="sendButton" @click="send" style="font-size: 1em; border-radius: 0 20px 20px 0; box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.3);">发送</el-button>
+              </div>
             </div>
+
           </div>
         </el-col>
       </el-row>
@@ -250,6 +241,10 @@ export default {
   0 0 80px #78cbff,
   0 0 120px #97d5ff;
   font-weight: bold;
+}
+
+/deep/ .el-card__body{
+  padding: 10px;
 }
 
 </style>

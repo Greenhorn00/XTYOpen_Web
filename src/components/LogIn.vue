@@ -27,6 +27,7 @@ export default {
       confirm_disabled: false,
       centerDialogVisible: false,
       haveUser: false,
+      isMobile: false,
       haveUserIs:'',
       GoogleId: "903775319941-h0b8q3qvip0b7t6dubfa6ir9pqd65r6c.apps.googleusercontent.com",
       httpsBack: this.$httpUrl,
@@ -173,7 +174,7 @@ export default {
               this.confirm_disabled = false;
               this.$message({
                 showClose: true,
-                message: '账号或密码错误,或此账号已封',
+                message: '账号或密码错误',
                 type: 'error',
               });
             }
@@ -248,7 +249,7 @@ export default {
               this.confirm_disabled = false;
               this.$message({
                 showClose: true,
-                message: '账号错误,或此账号已封',
+                message: '账号或密码错误',
                 type: 'error',
               });
             }
@@ -266,11 +267,17 @@ export default {
           confirmButtonText: '好的，我已点击',
         });
       });
-    }
+    },
+    checkIfMobile() {
+      this.isMobile = window.innerWidth < 768; // Adjust the value based on your requirements
+    },
+
   },
   mounted() {
     this.updateVideoSize();
     window.addEventListener('resize', this.updateVideoSize);
+    this.checkIfMobile();
+    window.addEventListener('resize', this.checkIfMobile);
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.updateVideoSize);
@@ -387,8 +394,9 @@ export default {
     <el-dialog
         :before-close="handleClose"
         :visible.sync="centerDialogVisible"
+        :fullscreen=isMobile
         center
-        title="用户"
+        title="- 新朋友 -"
         width="30%">
       <el-form ref="form" :model="form" :rules="rulesNew" label-width="80px" status-icon>
         <el-form-item label="账号" prop="no">
@@ -425,7 +433,7 @@ export default {
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="centerDialogVisible = false">取 消</el-button>
-        <el-button :loading="loading" type="primary" @click="save">{{ loading ? '提交中 ...' : '确 定' }}</el-button>
+        <el-button :loading="loading" type="primary" @click="save">{{ loading ? '提交中 ...' : '注 册' }}</el-button>
       </span>
     </el-dialog>
   </div>

@@ -342,7 +342,8 @@ export default{
             <el-button circle icon="el-icon-refresh-left" type="info" @click="restParam"></el-button>
           </div>
 
-          <el-timeline class="timeline" >
+<!--          电脑端-->
+          <el-timeline class="timeline" v-if=!isMobile>
             <el-timeline-item v-for="(item,i) in tableData" :key="i"  :timestamp="new Date(item.post.time).toDateString()" placement="top">
               <el-card class="box-card" style="min-height: 300px; margin: 20px;">
                 <div slot="header" style="display: flex; align-items: center; justify-content: space-between;">
@@ -395,6 +396,54 @@ export default{
               </el-card>
             </el-timeline-item>
           </el-timeline>
+<!--          手机端-->
+          <div v-if=isMobile>
+            <div v-for="(item,i) in tableData" :key="i">
+              <el-card class="box-card" style="min-height: 300px;margin-top: 10px;">
+                <div slot="header" style="display: flex; align-items: center; justify-content:space-between;">
+                  <div class="text2" style="padding-left: 10px;">{{ item.post.title }}</div>
+                  <div style="font-weight: 10; font-size: 16px;">
+                    {{ new Date(item.post.time).getMonth() + 1 }}/{{ new Date(item.post.time).getDate() }} <br>
+                    {{ new Date(item.post.time).getHours() }}:{{ new Date(item.post.time).getMinutes() }}
+                  </div>
+                </div>
+                <div class="text item" style="white-space: pre-line; padding: 0px 15px; min-height: 150px; max-height: 800px; overflow-y: auto;">
+                  <div class="ql-editor" v-html="item.post.name" v-highlight></div>
+                </div>
+                <div style="display: flex; justify-content:flex-end;">
+            <span style="font-weight: bold; color: #0043a1; text-shadow: 0px 2px 3px rgb(73,230,255); position: relative; top: 5px;">
+              {{ item.post.likenum }}
+            </span>
+                  <el-button circle icon="el-icon-thumb" size="small" style="margin-left: 10px;"
+                             type="success" @click="like(item.post.id)"></el-button>
+                  <el-button circle icon="el-icon-share" size="small" style="margin-left: 10px;"
+                             type="primary" @click="copy(item.post.name)"></el-button>
+                  <el-button icon="el-icon-delete-solid" size="small" style="margin-left: 10px;"
+                             type="danger" @click="del(item.post.id)">删除</el-button>
+                </div>
+
+                <div v-for="(item2,i) in item.post2" :key="i" >
+                  <el-divider v-if="i===0"></el-divider>
+                  <div style="width: 100%; min-height: 50px;display: flex; justify-content: space-between; ">
+                    <div style="display: flex; align-items:center;">
+                      <el-avatar :size="30" :src="item2.avatar"  shape="square" style="margin: 0px 10px;">{{ item.post.userno.charAt(0) }}</el-avatar>
+                      <div>
+                        <span style="font-size: 12px; font-weight: lighter; color: #6e6e6e"> {{item2.userName}}</span>
+                        <el-tag size="mini" :type="item2.roleId === 0 ? 'danger' : (item2.roleId === 1 ? 'warning' : 'info')" v-if="item2.roleId !== 2" effect="plain" style="margin-left: 5px; font-size: 10px;">
+                          {{ item2.roleId === 0 ? "超管" : (item2.roleId === 1 ? " 管理员" : " ") }}</el-tag>
+                        <br><span style="font-size: 16px; "> {{ item2.content }}</span>
+                      </div>
+                    </div>
+                    <div style="font-weight: 10; font-size: 14px; ">
+                      {{ new Date(item2.time).getMonth() + 1 }}/{{ new Date(item2.time).getDate() }}
+                      {{ new Date(item2.time).getHours() }}:{{ new Date(item2.time).getMinutes() }}
+                    </div>
+                  </div>
+                </div>
+              </el-card>
+            </div>
+          </div>
+
           <el-empty v-if="tableData.length === 0">
             <el-button type="success" @click="update">发表文章 !</el-button>
           </el-empty>
@@ -441,6 +490,7 @@ export default{
     <el-dialog
         :before-close="handleClose"
         :visible.sync="centerDialogVisible"
+        :fullscreen=isMobile
         center
         title="发表"
         width="80%"
@@ -571,18 +621,19 @@ export default{
   }
 }
 @media (min-width: 0px) and (max-width:768px){
-  .timeline{
-  }
-  .box-card{
-    width: 90%;
-  }
   .text2{
-    font-size: 15px;
-    position: relative;
-    left: 20px;
+    font-size: 1.2em;
   }
   .text{
-    font-size: small;
+    font-size: 1em;
+  }
+
+  /deep/ .el-card__header{
+    padding: 10px;
+  }
+
+  /deep/ .el-card__body{
+    padding: 10px;
   }
 
   .floating-button {

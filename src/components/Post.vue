@@ -141,27 +141,31 @@ export default {
     <el-page-header style="height: 25px; align-items: center; margin-left: 1vw; margin-top: 1vw;" @back="goBack" content="详情">
     </el-page-header>
 
-
     <div style="display: flex; flex-direction:column;   align-items: center; margin-top: 30px;">
-      <el-card v-for="(item,i) in PostMain" :key="i" class="box-card"
-               style="width: 85%; min-height: 300px; margin: 20px;">
+      <el-card v-for="(item,i) in PostMain" :key="i" class="box-card">
         <div slot="header" style="display: flex; align-items: center; justify-content: space-between;">
-          <div >
+          <div v-if="!isMobile">
             <el-avatar :size="40" :src="item.post.avatar" style="margin: 0px 10px;">{{
                 item.post.userno.charAt(0)
               }}</el-avatar>
-            <span  v-if="!isMobile" style="position: relative; top: -12px;font-size: 1vw;">{{ item.post.userno }}</span>
+            <span style="position: relative; top: -12px;font-size: 1vw;">{{ item.post.userno }}</span>
           </div>
 
-          <div style="position: relative; left: -25px;">
-            <span style="font-weight: 10; font-size: 1vw; color: #777777">{{ item.post.id }}.</span>
+          <div class="box-card-title">
+            <span v-if="!isMobile" style="font-weight: 10; font-size: 1em; color: #777777">{{ item.post.id }}.</span>
             <span class="text2" style="padding-left: 10px;">{{ item.post.title }}</span>
           </div>
 
-          <div style="font-weight: 10; font-size: 1vw; position: relative; top: -5px;">
+          <div style="font-weight: 10; font-size: 1em;" >
             {{ new Date(item.post.time).getMonth() + 1 }}/{{ new Date(item.post.time).getDate() }} <br>
             {{ new Date(item.post.time).getHours() }}:{{ new Date(item.post.time).getMinutes() }}
           </div>
+        </div>
+        <div v-if="isMobile">
+          <el-avatar :size="40" :src="item.post.avatar" style="margin: 0 10px;">{{
+              item.post.userno.charAt(0)
+            }}</el-avatar>
+          <span style="position: relative; top: -12px;font-size: 1em;">{{ item.post.userno }}</span>
         </div>
         <div class="text item" style="white-space: pre-line; padding: 0 15px; min-height: 150px; ">
           <div class="ql-editor" v-html="item.post.name" v-highlight></div>
@@ -205,13 +209,22 @@ export default {
 </template>
 
 <style scoped>
-.text{
-  font-size: 1vw;
-}
 
 @media (min-width: 768px){
+  .box-card{
+    width: 85%; min-height: 300px; margin: 20px;
+  }
+
+  .box-card-title{
+    position: relative; left: -25px;
+  }
+
+  .text{
+    font-size: 1.2em;
+  }
+
   .text2{
-    font-size: 1.2vw;
+    font-size: 1.5em;
   }
 
   .scroll-to-top {
@@ -223,10 +236,21 @@ export default {
   }
 }
 @media (min-width: 0px) and (max-width:768px){
+  .box-card{
+    width: 100%; min-height: 300px;
+    margin-bottom: 10px;
+  }
+
+  .box-card-title{
+    margin-right: 2px;
+  }
+
+  .text{
+    font-size: 1em;
+  }
+
   .text2{
-    font-size: 1.2vw;
-    position: relative;
-    left: 20px;
+    font-size: 1.2em;
   }
 
   .scroll-to-top {

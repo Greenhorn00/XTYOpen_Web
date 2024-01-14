@@ -229,7 +229,7 @@ export default {
             s
             <el-descriptions-item label="手机号">{{ this.user.phone }}</el-descriptions-item>
             <el-descriptions-item label="等级">
-              <el-progress :color="colors" :percentage=this.user.level class="dengJi" stroke-width="15"
+              <el-progress :color="colors" :percentage=parseInt(this.user.level) class="dengJi" :stroke-width=15
                            type="dashboard"></el-progress>
             </el-descriptions-item>
           </el-descriptions>
