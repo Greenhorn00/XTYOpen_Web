@@ -9,6 +9,7 @@ export default {
       postUrl: this.$httpUrl,
       musicShow: false,
       musicIMG: require('../assets/img/music.jpg'),
+      musicSearch: require('../assets/img/music.jpg'),
       musicPlayer: "el-icon-video-play",
       greetingMessage: "", // 存储问候消息的变量
       greetingMessages: {
@@ -17,12 +18,13 @@ export default {
         evening: ["晚上好", "晚安", "记得休息"]
       },
       user: JSON.parse(sessionStorage.getItem('CurUser')),
-
-      musicList: [ //已转动态加载
-        // {
-        //   title: '晴天',
-        //   file: 'http://localhost:8090/static/music/nh.mp3'
-        // },
+      //已转动态加载
+      // {
+      //   title: '晴天',
+      //   file: 'http://localhost:8090/static/music/nh.mp3',
+      // img: '图片url'
+      // },
+      musicList: [
       ],
       currentMusicIndex: 0,
       audio: this.$music,
@@ -101,9 +103,10 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        if (this.audio.src === file) {
-          this.mUp();
-        }
+        this.audio.pause();
+        this.musicPlayer = "el-icon-video-play";
+        this.musicGet();
+        this.currentMusicIndex= 0;
         this.$axios.get(this.$httpUrl + '/music/del?file=' + file).then(res => res.data).then(res => {
           if (res.code === 200) {
             this.musicGet();
@@ -134,8 +137,8 @@ export default {
           position: 'bottom-left',
         });
         this.audio.play();
-        this.musicPlayer = "el-icon-video-pause";
         this.findMusic(music.title);
+        this.musicPlayer = "el-icon-video-pause";
       } else {
         this.audio.pause();
         this.$notify({
@@ -188,7 +191,6 @@ export default {
       this.audio.play();
       this.musicPlayer = "el-icon-video-pause";
       this.findMusic(music.title);
-
       this.audio.onended = () => {
         this.mUp();
       };
@@ -207,10 +209,31 @@ export default {
       this.audio.play();
       this.musicPlayer = "el-icon-video-pause";
       this.findMusic(music.title);
-
       this.audio.onended = () => {
         this.mUp();
       };
+    },
+    findMusic(name){
+      this.$axios.get(this.$httpUrl + '/searchImage/' + name ).then(res => res.data).then(res => {
+        if (res.code === 200) {
+          // 尝试创建一个Image对象
+          const img = new Image();
+          img.src = res.data;
+
+          // 监听Image对象的load和error事件
+          img.onload = () => {
+            // 如果加载成功，则设置musicSearch为有效的图片URL
+            this.musicSearch = res.data;
+          };
+
+          img.onerror = () => {
+            // 如果加载失败，则设置musicSearch为备用的图片URL（this.musicIMG）
+            this.musicSearch = this.musicIMG;
+          };
+        } else {
+          this.musicSearch=this.musicIMG
+        }
+      })
     },
 
     handleChange(file, fileList) {
@@ -260,16 +283,6 @@ export default {
             // 可以添加其他键的处理逻辑
         }
       }
-
-    },
-    findMusic(name){
-      this.$axios.get(this.$httpUrl + '/searchImage/' + name ).then(res => res.data).then(res => {
-        if (res.code === 200) {
-          this.musicIMG=res.data
-        } else {
-          this.musicIMG='./music.jpg'
-        }
-      })
     },
 
   },
@@ -317,9 +330,9 @@ export default {
     </div>
 
     <el-dialog :visible.sync="musicShow" center fullscreen width="80%" custom-class="musicDialog">
-      <video class="background-video" autoplay muted loop>
-        <source src="../assets/video/ingame.mp4" type="video/mp4">
-      </video>
+<!--      <video class="background-video" autoplay muted loop>-->
+<!--        <source src="../assets/video/ingame.mp4" type="video/mp4">-->
+<!--      </video>-->
       <div style="width: 92vw; height: 70vh; display: flex;z-index: 10;position: absolute; left: 6%;">
         <div style="height: 100%; width:15%;" v-if="!this.isMobile">
           <div style="display: flex;align-content: center; color: #dadada;">
@@ -331,8 +344,9 @@ export default {
         </div>
         <div style="height: 100%; width: 100%; display: flex;flex-direction: column;">
           <div style="text-align: center;margin-top: 10%;">
-            <el-avatar :class="{ 'rotate-avatar': !this.audio.paused }" :size="this.isMobile?250:350" icon="el-icon-headset" :src="this.musicIMG"
+            <el-avatar :class="{ 'rotate-avatar': !this.audio.paused }" :size="this.isMobile?250:350" :src="musicSearch ? musicSearch : musicIMG"
                        style="font-size: 100px;">
+              <img :src=this.musicIMG />
             </el-avatar>
           </div>
           <div style="font-size: 30px; text-align: center;color: #dadada;">
@@ -343,6 +357,7 @@ export default {
         <div style="height: 100%; width: 15%;
              background: transparent;backdrop-filter: blur(5px);border-radius: 10px;
              -webkit-backdrop-filter: blur(5px); overflow-y: auto;"
+             v-loading="musicList.length===0"
              v-if="!this.isMobile">
 
           <div v-for="(item, index) in musicList" :key="index"
@@ -355,7 +370,6 @@ export default {
                        @click="musicDel(item.file)" icon="el-icon-delete">
             </el-button>
           </div>
-
         </div>
       </div>
       <div v-if="musicShow" class="floating-contor">
@@ -373,7 +387,7 @@ export default {
             :on-change="handleChange"
             accept="audio/mp3,audio/m4a"
             multiple
-            show-file-list="false"
+            :show-file-list="false"
             style="width: 0;height: 0;"
             v-if="!this.isMobile">
           <el-button v-if="musicShow" class="floating-inside"
@@ -393,8 +407,12 @@ export default {
   }
 }
 /deep/ .musicDialog {
-  background-color: #333333;
+  //background-color: #333333;
+  background-image: url("../assets/video/ingame.gif");
   z-index: -10;
+}
+/deep/ .el-loading-mask{
+  background-color: rgba(218, 218, 218, 0.1);
 }
 .background-video {
   position: absolute;

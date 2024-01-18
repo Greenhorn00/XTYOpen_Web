@@ -274,13 +274,14 @@ export default {
 
   },
   mounted() {
-    this.updateVideoSize();
-    window.addEventListener('resize', this.updateVideoSize);
+    /*this.updateVideoSize();
+    window.addEventListener('resize', this.updateVideoSize);*/
     this.checkIfMobile();
     window.addEventListener('resize', this.checkIfMobile);
   },
   beforeDestroy() {
-    window.removeEventListener('resize', this.updateVideoSize);
+    // window.removeEventListener('resize', this.updateVideoSize);
+    window.removeEventListener('resize', this.checkIfMobile);
   },
   created() {
     const script = document.createElement("script");
@@ -385,10 +386,12 @@ export default {
       </div>
     </div>
 
-    <div class="video-container">
-      <video ref="videoRef" autoplay class="video" loop muted>
-        <source src="../assets/video/back.mp4" type="video/mp4"/>
-      </video>
+<!--    <div class="video-container" v-if="!isMobile">-->
+<!--      <video ref="videoRef" autoplay class="video" loop muted>-->
+<!--        <source src="../assets/video/back.mp4" type="video/mp4"/>-->
+<!--      </video>-->
+<!--    </div>-->
+    <div class="MobileBack">
     </div>
 
     <el-dialog
@@ -440,6 +443,18 @@ export default {
 </template>
 
 <style scoped>
+.MobileBack{
+  z-index: -100;
+  position: fixed;
+  background-image: url("../assets/video/ingame.gif");
+  background-size: cover;
+  background-position: center;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
 
 .video-container {
   z-index: -100;
