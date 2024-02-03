@@ -330,9 +330,9 @@ export default {
     </div>
 
     <el-dialog :visible.sync="musicShow" center fullscreen width="80%" custom-class="musicDialog">
-<!--      <video class="background-video" autoplay muted loop>-->
-<!--        <source src="../assets/video/ingame.mp4" type="video/mp4">-->
-<!--      </video>-->
+      <video class="background-video" autoplay muted loop>
+        <source src="../assets/video/ing.mp4" type="video/mp4">
+      </video>
       <div style="width: 92vw; height: 70vh; display: flex;z-index: 10;position: absolute; left: 6%;">
         <div style="height: 100%; width:15%;" v-if="!this.isMobile">
           <div style="display: flex;align-content: center; color: #dadada;">
@@ -407,8 +407,8 @@ export default {
   }
 }
 /deep/ .musicDialog {
-  //background-color: #333333;
-  background-image: url("../assets/video/ingame.gif");
+  background-color: #333333;
+  //background-image: url("../assets/video/ingame.gif");
   z-index: -10;
 }
 /deep/ .el-loading-mask{
