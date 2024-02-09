@@ -113,7 +113,6 @@ export default {
             "  </div>\n" +
             "</div>";
       }
-      console.log(html)
       this.content += html;
       //下两行为滚动scrollDiv(refs上)到最下面
       this.$nextTick(() => {

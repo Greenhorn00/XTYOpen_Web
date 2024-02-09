@@ -147,7 +147,6 @@ export default {
         if (valid) {
           this.loading=true;
           this.$axios.post(this.$httpUrl + '/user/login', this.loginForm).then(res => res.data).then(res => {
-            console.log(res)
             if (res.code == 200) {
 
               this.$notify({
