@@ -323,7 +323,7 @@ export default {
   <div style="background-color: #333333;">
     <div class="loginOutLine">
       <div class="loginOut">
-        <h2 class="login-title">XTYOpen</h2>
+        <h2 class="login-title">XTY</h2>
         <el-form ref="loginForm"
                  :model="loginForm"
                  :rules="rules"
