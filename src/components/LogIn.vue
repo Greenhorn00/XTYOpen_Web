@@ -195,11 +195,6 @@ export default {
         }
       })
     },
-    updateVideoSize() {
-      const video = this.$refs.videoRef;
-      video.style.width = `${window.innerWidth}px`;
-      video.style.height = `${window.innerHeight}px`;
-    },
     handleClose(done) {
       this.$confirm('确认关闭？您的信息不会保存')
           .then(() => {
@@ -273,13 +268,10 @@ export default {
 
   },
   mounted() {
-    /*this.updateVideoSize();
-    window.addEventListener('resize', this.updateVideoSize);*/
     this.checkIfMobile();
     window.addEventListener('resize', this.checkIfMobile);
   },
   beforeDestroy() {
-    // window.removeEventListener('resize', this.updateVideoSize);
     window.removeEventListener('resize', this.checkIfMobile);
   },
   created() {
@@ -385,14 +377,14 @@ export default {
       </div>
     </div>
 
-<!--    以下根据是否为手机选择切换背景为MP4还是GIF格式-->
+    <!--    以下根据是否为手机选择切换背景为MP4还是GIF格式-->
     <div class="video-container" v-if="!isMobile">
       <video ref="videoRef" autoplay class="video" loop muted>
         <source src="../assets/video/ing.mp4" type="video/mp4"/>
       </video>
     </div>
     <div class="MobileBack" v-if="isMobile">
-<!--      gif全屏图-->
+      <!--      gif全屏图-->
     </div>
 
     <el-dialog

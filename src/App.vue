@@ -1,8 +1,6 @@
 <template>
-  <div id="app" ref="view">
-
+  <div id="app" ref="view" v-loading.fullscreen.lock="AllLoading" element-loading-text="拼命加载中">
     <router-view v-if="!devtoolsOpen"/>
-
 <!--    提示已开启控制面板-->
     <el-dialog
         fullscreen
@@ -50,7 +48,6 @@
         <h2>欢迎回来，开发者</h2>
       </div>
     </el-dialog>
-
   </div>
 </template>
 
@@ -67,6 +64,8 @@ export default {
     return {
       user: JSON.parse(sessionStorage.getItem('CurUser')),
 
+      AllLoading:false,
+
       devtoolsOpen:false,
       isSuccess:false,
       devtoolsPass:'',
@@ -82,6 +81,19 @@ export default {
       },
       immediate: true
     }
+  },
+
+  created() {
+    this.$router.beforeEach((to, from, next) => {
+      // 在路由导航开始时显示加载画面
+      this.AllLoading = true;
+      next();
+    });
+
+    this.$router.afterEach(() => {
+      // 在路由导航完成后隐藏加载画面
+      this.AllLoading = false;
+    });
   },
 
   mounted() {
