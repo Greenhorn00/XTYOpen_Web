@@ -83,18 +83,18 @@ export default {
     }
   },
 
-  created() {
-    this.$router.beforeEach((to, from, next) => {
-      // 在路由导航开始时显示加载画面
-      this.AllLoading = true;
-      next();
-    });
-
-    this.$router.afterEach(() => {
-      // 在路由导航完成后隐藏加载画面
-      this.AllLoading = false;
-    });
-  },
+  // created() {
+  //   this.$router.beforeEach((to, from, next) => {
+  //     // 在路由导航开始时显示加载画面
+  //     this.AllLoading = true;
+  //     next();
+  //   });
+  //
+  //   this.$router.afterEach(() => {
+  //     // 在路由导航完成后隐藏加载画面
+  //     this.AllLoading = false;
+  //   });
+  // },
 
   mounted() {
     // 创建一个 div 元素，并将其添加到页面中
