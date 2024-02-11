@@ -10,7 +10,8 @@
         :visible.sync="devtoolsOpen"
         :before-close="refuse"
         >
-      <el-result icon="info" :title="user?'你好，'+user.name:'你好，未登录者'" >
+      <el-result icon="info" :title="user?'你好，'+user.name:'你好，未登录者'"
+                 v-if="!isSuccess">
         <template slot="icon">
           <el-image style="width: 100px;" :src=imgSrc></el-image>
         </template>
@@ -36,9 +37,18 @@
           </el-statistic>
         </template>
       </el-result>
-      <span slot="footer" class="dialog-footer">
+      <span slot="footer" class="dialog-footer"
+            v-if="!isSuccess">
         <el-button type="primary" @click="up">我有密码，提交</el-button>
       </span>
+
+      <div class="start tick" v-if="isSuccess">
+        <svg width="200" height="200">
+          <circle fill="none" stroke="#68E534" stroke-width="10" cx="100" cy="100" r="95" class="circle" stroke-linecap="round" transform="rotate(-45 100 100) "/>
+          <polyline fill="none" stroke="#68E534" stroke-width="12" points="44,107 86.5,142 152,69" stroke-linecap="round" stroke-linejoin="round" class="tick" />
+        </svg>
+        <h2>欢迎回来，开发者</h2>
+      </div>
     </el-dialog>
 
   </div>
@@ -47,6 +57,7 @@
 <script >
 //引入devtoolsDetector控制台监视
 import * as devtoolsDetector from "devtools-detector";
+import './assets/tickStyle.css';//对勾动画css
 
 export default {
   name: 'App',
@@ -57,6 +68,7 @@ export default {
       user: JSON.parse(sessionStorage.getItem('CurUser')),
 
       devtoolsOpen:false,
+      isSuccess:false,
       devtoolsPass:'',
       imgSrc:require('./assets/img/eye.gif'),
     }
@@ -89,8 +101,12 @@ export default {
   },
   methods:{
     refuse(){//未通过，跳转其他页面
-      sessionStorage.clear()
-      document.location.replace('about:blank');
+      if (sessionStorage.getItem("isClear")!=="Yes"){
+        sessionStorage.clear()
+        document.location.replace('about:blank');
+      }else {
+        this.devtoolsOpen=false;//关闭弹窗;
+      }
     },
     up(){//发送通过密码以取消控制台限制
       this.$axios.post(this.$httpUrl + '/user/test?id=' + this.devtoolsPass,this.user?this.user:{
@@ -98,9 +114,14 @@ export default {
       }).then(res => res.data).then(res => {
         if (res.code === 200) {
           this.$refs.statistic.suspend(true);//暂停计时
-          this.devtoolsOpen=false;//关闭弹窗
           devtoolsDetector.stop();//关闭控制台检测
           sessionStorage.setItem("isClear", "Yes");
+
+          this.isSuccess=true;
+          // 5 秒后执行操作
+          setTimeout(() => {
+            this.devtoolsOpen=false;//关闭弹窗;
+          }, 4000); // 毫秒
         } else {
           this.refuse();
         }
