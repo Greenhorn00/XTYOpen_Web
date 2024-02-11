@@ -3,9 +3,10 @@
 import Aside from "@/components/Aside.vue";
 import Header from "@/components/Header.vue";
 import HeaderMobile from "@/components/HeaderMobile.vue";
+import Music from "@/components/Music.vue";
 export default {
   name:"IndexPage",
-  components: {HeaderMobile, Header, Aside},
+  components: {Music, HeaderMobile, Header, Aside},
   data(){
     return{
       isCollapse:true,
@@ -46,6 +47,7 @@ export default {
     </el-aside>
 
     <el-container style="height: 100%;">
+      <Music></Music>
       <el-header v-if="!this.isMobile" style="text-align: right; font-size: 12px; height: 100%; background-color: #dadada; box-shadow: 0 0 5px #dadada, 0 0 10px #777777;">
         <Header @doCollapse = "doCollapse" :icon="icon"></Header>
       </el-header>

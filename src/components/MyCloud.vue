@@ -121,25 +121,31 @@ export default {
         您的云盘上限为 7GB
       </div>
     </div>
-    <el-table
-        :data="FileList"
-        :header-cell-style="{ background:'#F0F0F0', color:'#000'}"
-        border
-        style="width: 95%; margin: 10px auto; box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);">
-      <el-table-column label="文件名" prop="name">
 
-      </el-table-column>
-      <el-table-column label="下载路径" prop="file" >
-      </el-table-column>
-      <el-table-column label="操作" prop="operate" >
-        <template slot-scope="scope">
-          <a :href="scope.row.file" :download="scope.row.name" target="_blank">
-            <el-button type="primary" slot="reference" icon="el-icon-download" style="margin-left: 10px;">下载</el-button>
+    <div style="margin-top: 10px;display: flex;flex-wrap: wrap;">
+      <div style="position: relative;
+                  width: 180px;
+                  min-height: 180px;
+                  border-radius: 10px;
+                  margin: 1em 1em;
+                  padding: 0.5em;
+                  text-align: center;
+                  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);"
+           v-for="(item,i) in FileList" :key="i" >
+        <i class="el-icon-folder" style="font-size: 50px;margin-top: 5px;"></i>
+        <div style="word-wrap: break-word;">{{item.name}}</div>
+
+        <div style="position: absolute;left: 0; bottom: 10px;width: 100%; display: flex; justify-content: space-evenly;">
+          <a :href="item.file" :download="item.name" target="_blank">
+            <el-button slot="reference" icon="el-icon-download" style="font-size: 25px;background-color: transparent;"></el-button>
           </a>
-          <el-button slot="reference" icon="el-icon-delete-solid" type="danger" @click="fileDel(scope.row.file)" style=" margin-left: 10px;">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+          <button class="delButton" @click="fileDel(item.file)">
+            <svg viewBox="0 0 448 512" class="svgIcon"><path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <el-dialog :visible.sync="drawer" center title="上传文件" :fullscreen=isMobile>
@@ -175,5 +181,58 @@ export default {
 /deep/ .el-upload .el-upload-dragger{
   width: 100%;
   height: 200px;
+}
+
+.delButton {
+  width: 60px;
+  height: 45px;
+  border-radius: 5px;
+  background-color: transparent;
+  border: none;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  //box-shadow: 0 0 20px rgba(0, 0, 0, 0.164);
+  cursor: pointer;
+  transition-duration: .3s;
+  overflow: hidden;
+  position: relative;
+}
+
+.svgIcon {
+  width: 12px;
+  transition-duration: .3s;
+}
+
+.svgIcon path {
+  fill: #464646;
+}
+
+.delButton:hover {
+  transition-duration: .3s;
+  align-items: center;
+}
+
+.delButton:hover .svgIcon {
+  width: 50px;
+  transition-duration: .3s;
+  transform: translateY(60%);
+}
+
+.delButton::before {
+  position: absolute;
+  top: -20px;
+  content: "Delete";
+  color: #464646;
+  transition-duration: .3s;
+  font-size: 2px;
+}
+
+.delButton:hover::before {
+  font-size: 13px;
+  opacity: 1;
+  transform: translateY(30px);
+  transition-duration: .3s;
 }
 </style>
