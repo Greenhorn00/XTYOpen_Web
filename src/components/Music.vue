@@ -15,6 +15,11 @@ export default {
 
       duration:0,//总时长
       currentPercentage:0,//进度
+
+      dragging: false, //3个拖动参数 是否拖动
+      offsetX: 0, //x轴
+      offsetY: 0, //y轴
+      smallMusicShow:true,
       //已转动态加载
       // {
       //   title: '晴天',
@@ -33,6 +38,9 @@ export default {
   methods: {
     musicC() {
       this.musicShow = !this.musicShow;
+      if(!this.smallMusicShow) {
+        this.smallMusicShow=true;
+      }
     },
     musicGet() {
       this.$axios.get(this.$httpUrl + '/music/list?userId=' + this.user.id).then(res => res.data).then(res => {
@@ -79,6 +87,22 @@ export default {
     },
     mPlay() {
       if (this.audio.paused) {
+        this.musicPlay();
+      } else {
+        this.musicPause();
+      }
+
+      this.audio.onended = () => {
+        this.mUp();
+      };
+    },
+    musicPlay(){
+      if(!this.audio.paused) return;
+      if (this.audio.currentTime){
+        const currentTime = this.audio.currentTime;
+        this.audio.play();
+        this.audio.currentTime = currentTime;
+      }else {
         const music = this.musicList[this.currentMusicIndex];
         this.audio.src = music.file;
         this.$notify({
@@ -89,22 +113,21 @@ export default {
         });
         this.audio.play();
         this.findMusic(music.title);
-        this.musicPlayer = "el-icon-video-pause";
-      } else {
-        this.audio.pause();
-        this.$notify({
-          title: "已暂停",
-          message: "您已暂停音乐",
-          iconClass: "el-icon-headset",
-          position: 'bottom-left',
-        });
-        this.musicPlayer = "el-icon-video-play";
       }
 
-      this.audio.onended = () => {
-        this.mUp();
-      };
+      this.musicPlayer = "el-icon-video-pause";
     },
+    musicPause(){
+      this.audio.pause();
+      this.$notify({
+        title: "已暂停",
+        message: "您已暂停音乐",
+        iconClass: "el-icon-headset",
+        position: 'bottom-left',
+      });
+      this.musicPlayer = "el-icon-video-play";
+    },
+
     mUp() {
       this.currentMusicIndex++;
       if (this.currentMusicIndex === this.musicList.length) {
@@ -244,6 +267,27 @@ export default {
       }
     },
 
+    // 拖动函数
+    startDrag(event) {
+      this.dragging = true;
+      this.offsetX = event.clientX - this.$refs.audioPlayer.offsetLeft;
+      this.offsetY = event.clientY - this.$refs.audioPlayer.offsetTop;
+      document.addEventListener('mousemove', this.doDrag);
+      document.addEventListener('mouseup', this.stopDrag);
+    },
+    doDrag(event) {
+      if (this.dragging) {
+        const x = event.clientX - this.offsetX;
+        const y = event.clientY - this.offsetY;
+        this.$refs.audioPlayer.style.left = x + 'px';
+        this.$refs.audioPlayer.style.top = y + 'px';
+      }
+    },
+    stopDrag() {
+      this.dragging = false;
+      document.removeEventListener('mousemove', this.doDrag);
+      document.removeEventListener('mouseup', this.stopDrag);
+    },
   },
   mounted() {
     this.checkIfMobile();
@@ -267,10 +311,42 @@ export default {
 </script>
 
 <template>
-  <div style="line-height: 60px;">
-    <el-button circle class="floating-button" icon="el-icon-headset" type="primary" @click="musicC"></el-button>
+  <div >
+<!--    <el-button circle class="floating-button" icon="el-icon-headset" type="primary" @click="musicC"></el-button>-->
 
-    <el-dialog :visible.sync="musicShow" center fullscreen width="80%" custom-class="musicDialog">
+    <div style="position: fixed;right: 5px;bottom: 5px;width: 300px;height: 80px; z-index: 100;" ref="audioPlayer" @mousedown="startDrag" v-if="smallMusicShow">
+      <div class="audio-player">
+        <div class="album-cover">
+          <el-avatar :class="{ 'rotate-avatar': !this.audio.paused }" :size="64" :src="musicSearch ? musicSearch : musicIMG"
+                     style="font-size: 100px;">
+            <img :src=this.musicIMG />
+          </el-avatar>
+        </div>
+        <div class="player-controls">
+          <div class="song-info">
+            <div class="song-title">
+              {{ this.currentMusicIndex > -1 && this.musicList[this.currentMusicIndex] ? this.musicList[this.currentMusicIndex].title : "Music" }}
+              <button class="pause-btn newButton" style="position: absolute;top: 5px;right: 0;" @click="musicC">
+                <svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="18" width="18"><path d="M63.989383 105.442494l0 268.396843c0 18.935258 15.368012 34.304294 34.304294 34.304294 18.936281 0 34.304294-15.369036 34.304294-34.304294L132.597971 180.156126l218.107483 218.176045c12.82919 12.830213 33.618679 12.830213 46.515407 0 12.830213-12.897751 12.830213-33.686217 0-46.51643l-218.176045-218.107483 193.683211 0c18.935258 0 34.304294-15.369036 34.304294-34.304294 0-18.935258-15.369036-34.304294-34.304294-34.304294L104.331183 65.09967C79.288834 65.09967 63.989383 77.999468 63.989383 105.442494L63.989383 105.442494z"></path><path d="M917.688719 65.09967 649.290853 65.09967c-18.935258 0-34.304294 15.369036-34.304294 34.304294 0 18.936281 15.369036 34.304294 34.304294 34.304294l193.683211 0-218.176045 218.107483c-12.830213 12.82919-12.830213 33.618679 0 46.51643 12.897751 12.830213 33.686217 12.830213 46.515407 0L889.420909 180.156126l0 193.683211c0 18.935258 15.369036 34.304294 34.304294 34.304294 18.936281 0 34.304294-15.369036 34.304294-34.304294L958.029496 105.442494C958.029496 77.999468 942.79963 65.09967 917.688719 65.09967L917.688719 65.09967z"></path><path d="M104.331183 957.013353l268.397866 0c18.935258 0 34.304294-15.368012 34.304294-34.304294 0-18.936281-15.369036-34.304294-34.304294-34.304294L179.045839 888.404766l218.176045-218.107483c12.830213-12.82919 12.830213-33.618679 0-46.515407-12.897751-12.830213-33.686217-12.830213-46.515407 0l-218.107483 218.176045L132.598994 648.27471c0-18.935258-15.368012-34.304294-34.304294-34.304294-18.936281 0-34.304294 15.369036-34.304294 34.304294l0 268.397866C63.989383 944.115602 79.288834 957.013353 104.331183 957.013353L104.331183 957.013353z"></path><path d="M958.029496 916.671553 958.029496 648.27471c0-18.935258-15.368012-34.304294-34.304294-34.304294-18.935258 0-34.304294 15.369036-34.304294 34.304294l0 193.683211L671.313425 623.781876c-12.82919-12.830213-33.618679-12.830213-46.515407 0-12.830213 12.897751-12.830213 33.686217 0 46.515407l218.176045 218.107483L649.290853 888.404766c-18.935258 0-34.304294 15.368012-34.304294 34.304294 0 18.936281 15.369036 34.304294 34.304294 34.304294l268.397866 0C942.79963 957.013353 958.029496 944.115602 958.029496 916.671553L958.029496 916.671553z"></path></svg>
+              </button>
+            </div>
+            <p class="artist">ZYJ</p>
+          </div>
+          <div class="progress-bar">
+            <el-progress :percentage="currentPercentage?currentPercentage:0" stroke-width="4"
+                         color="rgba(218,218,218,0.7)" define-back-color="#4f4f4f" :show-text=false></el-progress>
+          </div>
+          <div class="buttons">
+            <button class="pause-btn" @click="mDown"><svg viewBox="0 0 16 16" class="bi bi-skip-backward-fill" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg"> <path d="M.5 3.5A.5.5 0 0 0 0 4v8a.5.5 0 0 0 1 0V8.753l6.267 3.636c.54.313 1.233-.066 1.233-.697v-2.94l6.267 3.636c.54.314 1.233-.065 1.233-.696V4.308c0-.63-.693-1.01-1.233-.696L8.5 7.248v-2.94c0-.63-.692-1.01-1.233-.696L1 7.248V4a.5.5 0 0 0-.5-.5z"></path> </svg></button>
+            <button class="play-btn" @click="musicPlay"><svg viewBox="0 0 16 16" class="bi bi-play-fill" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg" style="color: white"> <path fill="white" d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"></path> </svg></button>
+            <button class="pause-btn" @click="musicPause"><svg viewBox="0 0 16 16" class="bi bi-pause-fill" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg" style="color: white"> <path fill="white" d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5zm5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5z"></path> </svg></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <el-dialog :visible.sync="musicShow" center fullscreen width="80%" custom-class="musicDialog" style="line-height: 60px;">
       <video class="background-video" autoplay muted loop>
         <source src="../assets/video/ing.mp4" type="video/mp4">
       </video>
@@ -400,6 +476,88 @@ export default {
     box-shadow: 0 0 10px #fff;
     transform: rotate(360deg);
   }
+}
+
+.audio-player {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 300px;
+  height: 80px;
+  background-color: rgba(110, 110, 110, 0.9);
+  border-radius: 8px;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.album-cover {
+  width: 64px;
+  height: 64px;
+  background-color: #fff;
+  border-radius: 50%;
+  margin-right: 12px;
+}
+
+.player-controls {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.song-info {
+  margin-bottom: 4px;
+}
+
+.song-title {
+  max-width: 200px;
+  font-size: 16px;
+  color: #fff;
+  margin: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+.artist {
+  font-size: 12px;
+  color: #b3b3b3;
+  margin: 0;
+}
+
+.progress-bar {
+  width: 90%;
+  height: 4px;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.buttons {
+  margin-top: 5px;
+  display: flex;
+}
+
+.buttons button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  outline: none;
+}
+.newButton{
+  background: none;
+  border: none;
+  cursor: pointer;
+  outline: none;
+}
+
+.play-btn,
+.pause-btn {
+  font-size: 16px;
+  color: #fff;
+  margin-right: 8px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.play-btn:hover,
+.pause-btn:hover {
+  transform: scale(1.2);
 }
 
 @media (min-width: 768px) {
