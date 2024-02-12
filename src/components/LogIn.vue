@@ -150,7 +150,7 @@ export default {
             if (res.code == 200) {
 
               this.$notify({
-                title: '欢迎' + res.data.user.name,
+                title: res.data.user.name,
                 message: '欢迎回来',
                 type: 'success'
               });
@@ -227,7 +227,7 @@ export default {
             if (res.code == 200) {
 
               this.$notify({
-                title: '欢迎' + res.data.user.name,
+                title: res.data.user.name,
                 message: '欢迎回来',
                 type: 'success'
               });
@@ -365,7 +365,7 @@ export default {
                          v-if="this.haveUser"> 切换
               </el-button>
               <el-button :disabled="confirm_disabled" :loading="loading" style="width: 70%; margin-top: 5px; font-size: large;" type="primary"
-                         @click="confirm"> 登陆
+                         @click="confirm">{{loading?"":"登陆"}}
               </el-button>
             </el-col>
           </el-form-item>
@@ -499,11 +499,11 @@ export default {
 
   .loginOut h2 {
     position: relative;
-    top: 40px;
+    top: 1.5em;
     margin-bottom: 10px;
     text-align: center;
     color: rgb(255, 255, 255);
-    font-size: 40px;
+    font-size: 60px;
     transition: .5s;
     animation: xty 10s linear infinite;
     transition-delay: 4s; /* 4秒的延迟 */

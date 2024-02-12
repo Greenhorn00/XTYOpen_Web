@@ -415,7 +415,7 @@ export default {
 
       <span slot="footer" class="dialog-footer">
         <el-button @click="centerDialogVisible = false; this.loading = false;">取 消</el-button>
-        <el-button :loading="loading" type="primary" @click="save">{{ loading ? '提交中 ...' : '确 定' }}</el-button>
+        <el-button :loading="loading" type="primary" @click="save">{{ loading ? '稍等片刻 ...' : '确 定' }}</el-button>
       </span>
     </el-dialog>
 
