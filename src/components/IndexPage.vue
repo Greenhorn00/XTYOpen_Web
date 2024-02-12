@@ -46,8 +46,9 @@ export default {
       <Aside :isCollapse="isCollapse"></Aside>
     </el-aside>
 
+    <Music></Music>
+
     <el-container style="height: 100%;">
-      <Music></Music>
       <el-header v-if="!this.isMobile" style="text-align: right; font-size: 12px; height: 100%; background-color: #dadada; box-shadow: 0 0 5px #dadada, 0 0 10px #777777;">
         <Header @doCollapse = "doCollapse" :icon="icon"></Header>
       </el-header>

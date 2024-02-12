@@ -12,6 +12,9 @@ export default {
       musicSearch: require('../assets/img/music.jpg'),
       musicPlayer: "el-icon-video-play",
       user: JSON.parse(sessionStorage.getItem('CurUser')),
+
+      duration:0,//总时长
+      currentPercentage:0,//进度
       //已转动态加载
       // {
       //   title: '晴天',
@@ -183,7 +186,15 @@ export default {
         }
       })
     },
+    seekTo(event) {
+      if (!this.audio) return;
+      const progress = event.offsetX / event.target.clientWidth;
+      this.audio.currentTime = progress * this.audio.duration;
+    },
 
+    UpMusicButton() {
+      this.$refs.uploadMusicButton.click(); // 调用el-upload的内部小按钮的点击实现上传
+    },
     handleChange(file, fileList) {
       console.log(fileList);
       if (file.response && file.response.code === 200) {
@@ -239,45 +250,54 @@ export default {
     window.addEventListener('resize', this.checkIfMobile);
     // 在组件挂载时添加键盘事件监听器
     window.addEventListener('keyup', this.handleKeyPress);
+
+    this.audio.addEventListener('loadedmetadata', () => {
+      this.duration = this.audio.duration;
+    });
+    this.audio.addEventListener('timeupdate', () => {
+      this.currentPercentage = (this.audio.currentTime / this.duration) * 100;
+    });
   },
   beforeDestroy() {
     // 在组件销毁前移除键盘事件监听器，以防止内存泄漏
     window.removeEventListener('keyup', this.handleKeyPress);
-    window.removeEventListener('keyup', this.checkIfMobile);
+    window.removeEventListener('resize', this.checkIfMobile);
   }
 };
 </script>
 
 <template>
-  <div>
+  <div style="line-height: 60px;">
     <el-button circle class="floating-button" icon="el-icon-headset" type="primary" @click="musicC"></el-button>
 
     <el-dialog :visible.sync="musicShow" center fullscreen width="80%" custom-class="musicDialog">
       <video class="background-video" autoplay muted loop>
         <source src="../assets/video/ing.mp4" type="video/mp4">
       </video>
-      <div style="width: 92vw; height: 70vh; display: flex;z-index: 10;position: absolute; left: 6%;">
+      <div style="display: flex;justify-content: space-between; z-index: 10;">
         <div style="height: 100%; width:15%;" v-if="!this.isMobile">
-          <div style="display: flex;align-content: center; color: #dadada;">
-            <el-avatar :size="45" :src="this.user.avatar" style="margin-right: 12px;position: relative;top:0.5em;">
+          <div style="display: flex;align-content: center;color: #dadada; line-height: 45px;">
+            <el-avatar :size="45" :src="this.user.avatar" style="margin-right: 12px;">
               {{ this.user.name.charAt(0) }}
             </el-avatar>
-            <div style="font-size: medium;user-select: none;">{{ this.user.name }}</div>
+            <div style="font-size: medium;user-select: none;">
+              {{ this.user.name }}
+            </div>
           </div>
         </div>
-        <div style="height: 100%; width: 100%; display: flex;flex-direction: column;">
-          <div style="text-align: center;margin-top: 10%;">
+        <div style="position: absolute; top: 0;left: 0; height: 100%; width: 100%; display: grid;place-items: center;">
+          <div style="text-align: center;position: relative; top: -3em;">
             <el-avatar :class="{ 'rotate-avatar': !this.audio.paused }" :size="this.isMobile?250:350" :src="musicSearch ? musicSearch : musicIMG"
                        style="font-size: 100px;">
               <img :src=this.musicIMG />
             </el-avatar>
-          </div>
-          <div style="font-size: 30px; text-align: center;color: #dadada;">
-            {{ this.currentMusicIndex > -1 && this.musicList[this.currentMusicIndex] ? this.musicList[this.currentMusicIndex].title : "Music" }}
-            <i class="el-icon-cherry"></i>
+            <div style="font-size: 30px; text-align: center;color: #dadada;">
+              {{ this.currentMusicIndex > -1 && this.musicList[this.currentMusicIndex] ? this.musicList[this.currentMusicIndex].title : "Music" }}
+              <i class="el-icon-cherry"></i>
+            </div>
           </div>
         </div>
-        <div style="height: 100%; width: 15%;
+        <div style="height: 80vh; width: 15%;
              background: transparent;backdrop-filter: blur(5px);border-radius: 10px;
              -webkit-backdrop-filter: blur(5px); overflow-y: auto;"
              v-loading="musicList.length===0"
@@ -296,6 +316,9 @@ export default {
         </div>
       </div>
       <div v-if="musicShow" class="floating-contor">
+        <el-progress :percentage="currentPercentage?currentPercentage:0" @click.native="seekTo"
+                     class="progressMusic"
+                     color="rgba(218,218,218,0.7)" define-back-color="rgba(218,218,218,0.3)" :show-text=false></el-progress>
         <el-button v-if="musicShow" class="floating-inside" icon="el-icon-close" size="medium"
                    @click="musicC"></el-button>
         <el-button v-if="musicShow" class="floating-inside" icon="el-icon-arrow-left" size="medium"
@@ -304,17 +327,16 @@ export default {
                    @click="mPlay"></el-button>
         <el-button v-if="musicShow" class="floating-inside" icon="el-icon-arrow-right" size="medium"
                    @click="mUp"></el-button>
+        <el-button v-if="musicShow" class="floating-inside" icon="el-icon-upload2" size="medium"
+                   @click="UpMusicButton"></el-button>
         <el-upload
             :action="`${this.postUrl}/music/up/${this.user.id}`"
             :before-upload="beforeUpload"
             :on-change="handleChange"
             accept="audio/mp3,audio/m4a"
             multiple
-            :show-file-list="false"
-            style="width: 0;height: 0;"
-            v-if="!this.isMobile">
-          <el-button v-if="musicShow" class="floating-inside"
-                     icon="el-icon-upload2" size="medium"></el-button>
+            :show-file-list=false>
+          <button ref="uploadMusicButton" style="opacity: 0;"></button>
         </el-upload>
       </div>
     </el-dialog>
@@ -381,10 +403,13 @@ export default {
 }
 
 @media (min-width: 768px) {
+  .progressMusic{
+    width: 40em;position: absolute;top: -3em;
+  }
 
   .floating-contor {
     position: absolute;
-    top: 90%;
+    bottom: 20px;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 90%;
@@ -410,10 +435,13 @@ export default {
 }
 
 @media (min-width: 0px) and (max-width: 768px) {
+  .progressMusic{
+    width: 25em;position: absolute;top: -3em;
+  }
 
   .floating-contor {
     position: absolute;
-    top: 90%;
+    bottom: 20px;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 90%;
