@@ -16,6 +16,13 @@ export default {
       duration:0,//总时长
       currentPercentage:0,//进度
 
+      isWYY:false,//判断网易云列表
+
+      addWYYShow:false,//导入网易云界面 显示
+      addWYYPass:false,//导入网易云界面 是否有cookie
+      addWYYUrl:'',//网易云登陆二维码
+      addUrl:'',//导入链接
+
       dragging: false, //3个拖动参数 是否拖动
       offsetX: 0, //x轴
       offsetY: 0, //y轴
@@ -42,10 +49,41 @@ export default {
         this.smallMusicShow=true;
       }
     },
+
+    musicChangeList(){
+      if(this.isWYY){
+        this.musicGet();
+      }
+      else {
+        this.musicGetWYY();
+      }
+    },
     musicGet() {
       this.$axios.get(this.$httpUrl + '/music/list?userId=' + this.user.id).then(res => res.data).then(res => {
         if (res.code === 200) {
           this.musicList = res.data;
+          this.isWYY = false;
+        } else {
+          this.$notify({
+            title: "音乐加载失败",
+            message: '服务器开小差啦~ 请稍后再试',
+            type: 'error',
+          });
+        }
+      })
+    },
+    musicGetWYY(){
+      this.$axios.get(this.$httpUrl + '/music/listWYY?userId=' + this.user.id).then(res => res.data).then(res => {
+        if (res.code === 200) {
+          if(res.data) this.musicList = res.data;
+          else {
+            this.$message({
+              showClose: true,
+              message: '您还没有导入网易云歌单喔',
+              type: 'info'
+            });
+          }
+          this.isWYY = true;
         } else {
           this.$notify({
             title: "音乐加载失败",
@@ -84,6 +122,37 @@ export default {
       }).catch(() => {
       });
     },
+    musicDelWYY(title) {
+      this.$confirm('是否删除《'+title+'》?   此音乐可能为网易云vip歌曲无法播放', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }).then(() => {
+        this.$axios.post(this.$httpUrl + '/music/delWYY' ,{
+          param: {
+            userId : this.user.id,
+            title : title
+          }
+        }).then(res => res.data).then(res => {
+          if (res.code === 200) {
+            this.musicGetWYY();
+            this.$message({
+              showClose: true,
+              message: '删除成功',
+              type: 'success'
+            });
+          } else {
+            this.$message({
+              showClose: true,
+              message: '删除失败',
+              type: 'error'
+            });
+          }
+        })
+      }).catch(() => {
+      });
+    },
+
     mPlay() {
       if (this.audio.paused) {
         this.musicPlay();
@@ -126,6 +195,14 @@ export default {
         this.currentMusicIndex = 0;
       }
       const music = this.musicList[this.currentMusicIndex];
+
+      musicCheckUrl(music.file).then((available) => {
+        if(!available){
+          this.musicDelWYY(music.title); //检查音乐可用并提示删除
+          this.mUp();
+        }
+      });
+
       this.audio.src = music.file;
       if(!this.isMobile){
         this.$notify({
@@ -148,6 +225,13 @@ export default {
         this.currentMusicIndex = this.musicList.length - 1;
       }
       const music = this.musicList[this.currentMusicIndex];
+
+      musicCheckUrl(music.file).then((available) => {
+        if(!available){
+          this.musicDelWYY(music.title); //检查音乐可用并提示删除
+        }
+      });
+
       this.audio.src = music.file;
       if(!this.isMobile){
         this.$notify({
@@ -167,6 +251,14 @@ export default {
       if (!this.audio.paused) this.audio.pause();
       this.currentMusicIndex = index;
       const music = this.musicList[this.currentMusicIndex];
+
+      musicCheckUrl(music.file).then((available) => {
+        if(!available){
+          this.musicDelWYY(music.title); //检查音乐可用并提示删除
+          this.mUp();
+        }
+      });
+
       this.audio.src = music.file;
       this.$notify({
         title: "正在为您播放：" + music.title,
@@ -260,6 +352,70 @@ export default {
       }
     },
 
+    addWYYBtn(){
+      this.addWYYCheck();
+      this.addWYYShow = true;
+    },
+    addWYYCheck(){
+      this.addWYYUrl='';
+      this.addUrl='';
+      this.$axios.get(this.$httpWYY + '/wyyCheck').then(res => res.data).then(res => {
+        if (res.code === 200) {
+          this.addWYYPass = true;
+        } else if ((res.code === 400)) {
+          this.addWYYPass=false;
+          this.addWYYUrl=res.url;
+        }
+        else {
+          this.addWYYPass=false;
+          this.$message({
+            showClose: true,
+            message: '出错啦！',
+            type: 'error'
+          });
+        }
+      }).catch(error => {
+        console.log(error)
+        this.addWYYPass=false;
+        this.$message({
+          showClose: true,
+          message: '爬虫服务器链接失败啦！',
+          type: 'error'
+        });
+        this.addWYYShow = false;
+      })
+    },
+    addWYY(url){
+      this.$axios.post(this.$httpWYY + '/wyyAdd',{
+        id: this.user.id,
+        url: url
+      }).then(res => res.data).then(res => {
+        if (res.code === 200) {
+          this.$message({
+            showClose: true,
+            message: '此歌单导入成功！',
+            type: 'success'
+          });
+          this.addWYYShow=false;
+          this.musicGetWYY();
+        } else if ((res.code === 400)) {
+          this.$message({
+            showClose: true,
+            message: '导入失败或链接无音乐',
+            type: 'error'
+          });
+        }
+      }).catch(error => {
+        console.log(error)
+        this.addWYYPass=false;
+        this.$message({
+          showClose: true,
+          message: '爬虫服务器链接失败啦！',
+          type: 'error'
+        });
+      })
+    },
+
     // 拖动函数
     startDrag(event) {
       this.dragging = true;
@@ -301,6 +457,18 @@ export default {
     window.removeEventListener('resize', this.checkIfMobile);
   }
 };
+
+function musicCheckUrl(file) {
+  return new Promise((resolve) => {
+    const audio = new Audio(file);
+    audio.oncanplay = () => {
+      resolve(true); // 音乐可用
+    };
+    audio.onerror = () => {
+      resolve(false); // 音乐不可用
+    };
+  });
+}
 </script>
 
 <template>
@@ -353,8 +521,13 @@ export default {
               {{ this.user.name }}
             </div>
           </div>
+          <div style="margin-top: 10px;width: 140px; display: flex; flex-direction: column;">
+            <el-button style="color: #ffffff; margin-bottom: 10px;  border:none; width: 100%;" :style="{'background-color': isWYY ? 'rgba(86,86,86,0.8)' : 'rgba(194,12,12,0.5)'}"  @click="musicChangeList()">{{isWYY? '本地歌单' : '网易云歌单'}}</el-button>
+            <el-button style="background-color: transparent; color: #ffffff; width: 100%; margin: 0;" @click="addWYYBtn()">导入网易云歌单</el-button>
+          </div>
         </div>
-        <div style="position: absolute; top: 0;left: 0; height: 100%; width: 100%; display: grid;place-items: center;">
+
+        <div style="position: absolute; top: 0;left: 0; height: 100%; width: 100%; display: grid;place-items: center;z-index: -1;">
           <div style="text-align: center;position: relative; top: -3em;">
             <el-avatar :class="{ 'rotate-avatar': !this.audio.paused }" :size="this.isMobile?250:350" :src="musicSearch ? musicSearch : musicIMG"
                        style="font-size: 100px;">
@@ -379,7 +552,7 @@ export default {
               {{ item.title }}
             </div>
             <el-button :disabled="item.title==='我会等' || item.title==='晴天'" size="mini" style="margin:0 10px;background-color: transparent;"
-                       @click="musicDel(item.file)" icon="el-icon-delete">
+                       @click="isWYY? musicDelWYY(item.title) : musicDel(item.file)" icon="el-icon-delete">
             </el-button>
           </div>
         </div>
@@ -408,6 +581,46 @@ export default {
           <button ref="uploadMusicButton" style="opacity: 0;"></button>
         </el-upload>
       </div>
+
+<!--      导入网易云-->
+      <el-dialog
+          :visible.sync="addWYYShow"
+          append-to-body
+          fullscreen>
+        <div v-loading.fullscreen.lock="!addWYYUrl&&!addWYYPass&&addWYYShow"
+             element-loading-text="请稍后 ..."></div>
+        <div v-if="!addWYYPass">
+          <el-result icon="info" title="请使用手机网易云扫码登陆" v-if="addWYYUrl">
+            <template slot="icon">
+              <el-image style="width: 300px;" :src=addWYYUrl></el-image>
+            </template>
+            <template slot="extra">
+              <div style="font-size: large;white-space: nowrap; margin-bottom: 40px;">
+                <div style="margin-top:5px;">扫码完成后请点击检查</div>
+              </div>
+              <el-button @click="addWYYShow=false">关闭</el-button>
+              <el-button type="primary" icon="el-icon-refresh" @click="addWYYCheck">检查</el-button>
+            </template>
+          </el-result>
+        </div>
+        <div v-if="addWYYPass">
+          <el-result icon="success" title="请粘贴您要导入的歌单页面链接">
+            <template slot="extra">
+              <div style="font-size: large;white-space: nowrap;">
+                我们会导入您的歌单，但是网易云<div style="display: inline; color: darkred;"> VIP音乐 </div>无法播放
+                <div style="margin-top:5px;">对此，如果您有更好的爬虫 欢迎加入我们 ~</div>
+              </div>
+              <el-input v-model="addUrl"
+                        clearable
+                        placeholder="歌单网址"
+                        @keyup.enter.native="addWYY(addUrl)"
+                        style="margin: 30px 0;"></el-input>
+              <el-button @click="addWYYShow=false">关闭</el-button>
+              <el-button type="primary" @click="addWYY(addUrl)">提交</el-button>
+            </template>
+          </el-result>
+        </div>
+      </el-dialog>
     </el-dialog>
   </div>
 </template>
