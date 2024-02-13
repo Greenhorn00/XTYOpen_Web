@@ -51,7 +51,6 @@ export default {
             title: "音乐加载失败",
             message: '服务器开小差啦~ 请稍后再试',
             type: 'error',
-            position: 'bottom-left',
           });
         }
       })
@@ -109,7 +108,6 @@ export default {
           title: "正在为您播放：" + music.title,
           message: "祝您愉快~ ",
           iconClass: "el-icon-headset",
-          position: 'bottom-left',
         });
         this.audio.play();
         this.findMusic(music.title);
@@ -119,12 +117,6 @@ export default {
     },
     musicPause(){
       this.audio.pause();
-      this.$notify({
-        title: "已暂停",
-        message: "您已暂停音乐",
-        iconClass: "el-icon-headset",
-        position: 'bottom-left',
-      });
       this.musicPlayer = "el-icon-video-play";
     },
 
@@ -135,12 +127,13 @@ export default {
       }
       const music = this.musicList[this.currentMusicIndex];
       this.audio.src = music.file;
-      this.$notify({
-        title: "正在为您播放：" + music.title,
-        message: "祝您愉快~",
-        iconClass: "el-icon-headset",
-        position: 'bottom-left',
-      });
+      if(!this.isMobile){
+        this.$notify({
+          title: "正在为您播放：" + music.title,
+          message: "祝您愉快~",
+          iconClass: "el-icon-headset",
+        });
+      }
       this.audio.play();
       this.musicPlayer = "el-icon-video-pause";
       this.findMusic(music.title);
@@ -156,12 +149,13 @@ export default {
       }
       const music = this.musicList[this.currentMusicIndex];
       this.audio.src = music.file;
-      this.$notify({
-        title: "正在为您播放：" + music.title,
-        message: "祝您愉快~",
-        iconClass: "el-icon-headset",
-        position: 'bottom-left',
-      });
+      if(!this.isMobile){
+        this.$notify({
+          title: "正在为您播放：" + music.title,
+          message: "祝您愉快~",
+          iconClass: "el-icon-headset",
+        });
+      }
       this.audio.play();
       this.musicPlayer = "el-icon-video-pause";
       this.findMusic(music.title);
@@ -178,7 +172,6 @@ export default {
         title: "正在为您播放：" + music.title,
         message: "祝您愉快~",
         iconClass: "el-icon-headset",
-        position: 'bottom-left',
       });
       this.audio.play();
       this.musicPlayer = "el-icon-video-pause";
