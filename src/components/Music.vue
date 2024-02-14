@@ -599,7 +599,7 @@ function musicCheckUrl(file) {
         <el-button v-if="musicShow" class="floating-inside" icon="el-icon-arrow-right" size="medium"
                    @click="mUp"></el-button>
         <el-button v-if="musicShow" class="floating-inside" icon="el-icon-upload2" size="medium"
-                   @click="UpMusicButton"></el-button>
+                   @click="UpMusicButton" :disabled="isWYY"></el-button>
         <el-upload
             :action="`${this.postUrl}/music/up/${this.user.id}`"
             :before-upload="beforeUpload"
