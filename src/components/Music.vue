@@ -13,6 +13,8 @@ export default {
       musicPlayer: "el-icon-video-play",
       user: JSON.parse(sessionStorage.getItem('CurUser')),
 
+      musicName:'', //查询音乐名
+
       duration:0,//总时长
       currentPercentage:0,//进度
 
@@ -152,6 +154,17 @@ export default {
       }).catch(() => {
       });
     },
+    find() {
+      this.musicList = this.musicList.filter(item => {
+        // 使用 toLowerCase() 进行不区分大小写的比较
+        return item.title.toLowerCase().includes(this.musicName);
+      });
+    },
+    resetSearch(){
+      this.musicName='';
+      if(this.isWYY) this.musicGetWYY();
+      else this.musicGet();
+    },
 
     mPlay() {
       if (this.audio.paused) {
@@ -199,7 +212,7 @@ export default {
       musicCheckUrl(music.file).then((available) => {
         if(!available){
           this.musicDelWYY(music.title); //检查音乐可用并提示删除
-          this.mUp();
+          this.musicPause();
         }
       });
 
@@ -255,7 +268,7 @@ export default {
       musicCheckUrl(music.file).then((available) => {
         if(!available){
           this.musicDelWYY(music.title); //检查音乐可用并提示删除
-          this.mUp();
+          this.musicPause();
         }
       });
 
@@ -396,6 +409,7 @@ export default {
             message: '此歌单导入成功！',
             type: 'success'
           });
+          this.addUrl='';
           this.addWYYShow=false;
           this.musicGetWYY();
         } else if ((res.code === 400)) {
@@ -442,7 +456,7 @@ export default {
     this.checkIfMobile();
     window.addEventListener('resize', this.checkIfMobile);
     // 在组件挂载时添加键盘事件监听器
-    window.addEventListener('keyup', this.handleKeyPress);
+    // window.addEventListener('keyup', this.handleKeyPress);
 
     this.audio.addEventListener('loadedmetadata', () => {
       this.duration = this.audio.duration;
@@ -453,7 +467,7 @@ export default {
   },
   beforeDestroy() {
     // 在组件销毁前移除键盘事件监听器，以防止内存泄漏
-    window.removeEventListener('keyup', this.handleKeyPress);
+    // window.removeEventListener('keyup', this.handleKeyPress);
     window.removeEventListener('resize', this.checkIfMobile);
   }
 };
@@ -539,23 +553,38 @@ function musicCheckUrl(file) {
             </div>
           </div>
         </div>
-        <div style="height: 80vh; width: 15%;
+        <div style="width: 15%; z-index: 1;
              background: transparent;backdrop-filter: blur(5px);border-radius: 10px;
-             -webkit-backdrop-filter: blur(5px); overflow-y: auto;"
-             v-loading="musicList.length===0"
-             v-if="!this.isMobile">
+             -webkit-backdrop-filter: blur(20px);">
+          <div style="height: 80vh; overflow-y: auto;"
+               v-loading="musicList.length===0&&!musicName"
+               v-if="!this.isMobile">
 
-          <div v-for="(item, index) in musicList" :key="index"
-               style="width: 100%; height: 3em; margin: 0.5em; color: #dadada;
+            <div v-for="(item, index) in musicList" :key="index"
+                 style="width: 100%; height: 3em; margin: 0.5em; color: #dadada;
             font-size: medium; display: flex;align-items: center; justify-content: space-between;">
-            <div style="user-select: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" @click="musicClickPlay(index)">
-              {{ item.title }}
+              <div style="user-select: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" @click="musicClickPlay(index)">
+                {{ item.title }}
+              </div>
+              <el-button :disabled="item.title==='我会等' || item.title==='晴天'" size="mini" style="margin:0 10px;background-color: transparent;"
+                         @click="isWYY? musicDelWYY(item.title) : musicDel(item.file)" icon="el-icon-delete">
+              </el-button>
             </div>
-            <el-button :disabled="item.title==='我会等' || item.title==='晴天'" size="mini" style="margin:0 10px;background-color: transparent;"
-                       @click="isWYY? musicDelWYY(item.title) : musicDel(item.file)" icon="el-icon-delete">
-            </el-button>
+            <el-empty v-if="musicList.length===0&&musicName" description="没有喔，换个词搜搜吧"></el-empty>
+          </div>
+          <div style="width: 100%;display: flex;align-items: end;"><div class="musicSearch">
+              <input class="input" placeholder="搜 索 音 乐" v-model="musicName" @keyup.enter.native="find()" type="text">
+              <span class="input-border"></span>
+            </div>
+            <el-button @click="find()" size="mini" icon="el-icon-search"
+                       style="width: 30px; background-color: transparent;font-size: large;border: none;"
+            ></el-button>
+            <el-button @click="resetSearch()" size="mini" icon="el-icon-refresh"
+                       style="width: 30px; margin: 0; background-color: transparent; font-size: large;border: none;"
+            ></el-button>
           </div>
         </div>
+
       </div>
       <div v-if="musicShow" class="floating-contor">
         <el-progress :percentage="currentPercentage?currentPercentage:0" @click.native="seekTo"
@@ -683,7 +712,54 @@ function musicCheckUrl(file) {
     transform: rotate(360deg);
   }
 }
+/* 音乐播放器小 开始=========== */
+.musicSearch{
+  --width-of-input: 200px;
+  --border-height: 1px;
+  --border-before-color: rgba(221, 221, 221, 0.39);
+  --border-after-color: #5891ff;
+  --input-hovered-color: #4985e01f;
+  position: relative;
+  height: 50px;
+  width: var(--width-of-input);
+}
+/* styling of Input */
+.musicSearch .input {
+  color: #fff;
+  font-size: 0.9rem;
+  background-color: transparent;
+  width: 100%;
+  box-sizing: border-box;
+  padding-inline: 0.5em;
+  padding-block: 0.7em;
+  border: none;
+  border-bottom: var(--border-height) solid var(--border-before-color);
+}
+/* styling of animated border */
+.input-border {
+  position: absolute;
+  background: var(--border-after-color);
+  width: 0%;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  transition: 0.3s;
+}
+/* Hover on Input */
+.musicSearch input:hover {
+  background: var(--input-hovered-color);
+}
 
+.musicSearch input:focus {
+  outline: none;
+}
+/* here is code of animated border */
+.musicSearch input:focus ~ .input-border {
+  width: 100%;
+}
+/* ================搜索 结束 */
+
+/* 音乐播放器小 开始=========== */
 .audio-player {
   display: flex;
   align-items: center;
@@ -765,6 +841,8 @@ function musicCheckUrl(file) {
 .pause-btn:hover {
   transform: scale(1.2);
 }
+
+/* ================音乐播放器小 结束 */
 
 @media (min-width: 768px) {
   .progressMusic{
