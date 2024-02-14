@@ -380,7 +380,7 @@ export default {
     <!--    以下根据是否为手机选择切换背景为MP4还是GIF格式-->
     <div class="video-container" v-if="!isMobile">
       <video ref="videoRef" autoplay class="video" loop muted>
-        <source src="../assets/video/ing.mp4" type="video/mp4"/>
+        <source src="../assets/video/grassland.mp4" type="video/mp4"/>
       </video>
     </div>
     <div class="MobileBack" v-if="isMobile">
