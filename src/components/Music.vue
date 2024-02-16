@@ -372,6 +372,7 @@ export default {
     addWYYCheck(){
       this.addWYYUrl='';
       this.addUrl='';
+      this.addWYYPass = false;
       this.$axios.get(this.$httpWYY + '/wyyCheck').then(res => res.data).then(res => {
         if (res.code === 200) {
           this.addWYYPass = true;
