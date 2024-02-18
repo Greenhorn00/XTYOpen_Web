@@ -14,7 +14,7 @@ export default {
   },
   data() {
     return {
-      pageSize:15,
+      pageSize:10,
       pageNum:1,
       postUrl: this.$httpUrl,
       quillUpdateImg:false,//加载图片
