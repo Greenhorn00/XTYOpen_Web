@@ -110,7 +110,7 @@ export default {
       }
     },
     goBack() {
-      this.$router.go(-1); // Go back one step in history
+      this.$router.replace('/Home') // Go back one step in history
     },
     checkIfMobile() {
       this.isMobile = window.innerWidth < 768; // Adjust the value based on your requirements
