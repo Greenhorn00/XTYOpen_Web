@@ -62,7 +62,7 @@ export default {
                       message: '删除成功',
                       type: 'success',
                     });
-                    this.loadPost();
+                    this.restParam();
                   } else {
                     this.$message({
                       showClose: true,
