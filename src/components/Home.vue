@@ -14,6 +14,8 @@ export default {
   },
   data() {
     return {
+      pageSize:15,
+      pageNum:1,
       postUrl: this.$httpUrl,
       quillUpdateImg:false,//加载图片
       isMobile: false, //手机端
@@ -81,19 +83,40 @@ export default {
   methods: {
     loadPost() {
       this.$axios.post(this.$httpUrl + '/post/listPage', {
+        pageSize: this.pageSize,
+        pageNum: this.pageNum,
         param: {
           name: this.text
         }
       }).then(res => res.data).then(res => {
         if (res.code === 200) {
-          this.tableData = res.data
+          // this.tableData =  res.data
+          if(res.data.length === 0){
+            this.$message({
+              showClose: true,
+              message: '没有更多啦',
+              type: 'info'
+            });
+          }
+          this.tableData = [...this.tableData, ...res.data];
         } else {
           alert('获取失败')
         }
       })
     },
+    searchLoad(){
+      this.tableData = [];
+      this.pageNum = 1;
+      this.loadPost();
+    },
+    autoLoad(){
+      this.pageNum += 1;
+      this.loadPost();
+    },
     restParam() {
       this.text = '';
+      this.tableData = [];
+      this.pageNum = 1;
       this.loadPost();
     },
     post2(id) {
@@ -332,12 +355,12 @@ export default {
             clearable
             placeholder="查询帖子"
             style="width: 400px;"
-            @keyup.enter.native="loadPost"></el-input>
-        <el-button circle icon="el-icon-search" style="margin-left: 10px;" @click="loadPost"></el-button>
+            @keyup.enter.native="searchLoad"></el-input>
+        <el-button circle icon="el-icon-search" style="margin-left: 10px;" @click="searchLoad"></el-button>
         <el-button circle icon="el-icon-refresh-left" type="info" @click="restParam"></el-button>
       </div>
 <!--      帖子卡片-->
-      <div style="display: flex; flex-direction:column;   align-items: center; margin-top: 30px;">
+      <div style="display: flex; flex-direction:column; align-items: center; margin-top: 30px;">
         <el-card v-for="(item,i) in tableData" :key="i" class="box-card">
           <div @click="goToPost(item.post.id)">
 
@@ -354,7 +377,7 @@ export default {
                 <span class="text2">{{ item.post.title }}</span>
               </div>
 
-              <el-image class="postImg" :src="item.Img ? item.Img : require('../assets/img/homeB.jpg')">
+              <el-image lazy class="postImg" :src="item.Img ? item.Img : require('../assets/img/homeB.jpg')">
               </el-image>
             </div>
 
@@ -382,6 +405,9 @@ export default {
             </div>
           </div>
         </el-card>
+        <div style="width: 100%; margin: 20px 0; text-align: center;">
+          <el-button style="width: 50%;" @click="autoLoad">更多</el-button>
+        </div>
       </div>
     </div>
 

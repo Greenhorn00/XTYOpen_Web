@@ -6,6 +6,8 @@ export default {
     return {
       isMobile: false, //手机端
       isVisible: false,
+      pageSize: 12,
+      pageNum: 1,
       user: '',
       text: '',
       tableData: [],
@@ -21,15 +23,32 @@ export default {
         }
       }).then(res => res.data).then(res => {
         if (res.code === 200) {
-          this.tableData = res.data
-          this.total = res.total
+          if(res.data.length === 0){
+            this.$message({
+              showClose: true,
+              message: '没有更多啦',
+              type: 'info'
+            });
+          }
+          this.tableData = [...this.tableData, ...res.data];
         } else {
           alert('获取失败')
         }
       })
     },
+    searchLoad(){
+      this.tableData = [];
+      this.pageNum = 1;
+      this.loadPost();
+    },
+    autoLoad(){
+      this.pageNum += 1;
+      this.loadPost();
+    },
     restParam() {
       this.text = '';
+      this.tableData = [];
+      this.pageNum = 1;
       this.loadPost();
     },
     del(id) {
@@ -150,9 +169,9 @@ export default {
             clearable
             placeholder="查询帖子"
             style="width: 400px;"
-            @keyup.enter.native="loadPost"></el-input>
+            @keyup.enter.native="searchLoad"></el-input>
 
-        <el-button circle icon="el-icon-search" style="margin-left: 10px;" @click="loadPost"></el-button>
+        <el-button circle icon="el-icon-search" style="margin-left: 10px;" @click="searchLoad"></el-button>
         <el-button circle icon="el-icon-refresh-left" type="info" @click="restParam"></el-button>
       </div>
 
@@ -208,6 +227,9 @@ export default {
             </div>
           </div>
         </el-card>
+        <div style="width: 100%; margin: 20px 0; text-align: center;">
+          <el-button style="width: 50%;" @click="autoLoad">更多</el-button>
+        </div>
       </div>
     </div>
 

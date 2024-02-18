@@ -17,7 +17,7 @@ export default{
       loading: false,
       user: JSON.parse(sessionStorage.getItem('CurUser')),
       activeName:'first',
-      pageSize: 9,
+      pageSize: 5,
       pageNum: 1,
       total: 1,
       text: '',
@@ -75,7 +75,6 @@ export default{
   },
   methods: {
     loadPost() {
-      this.loadPost2();
       this.$axios.post(this.$httpUrl + '/post/listPage', {
         pageSize: this.pageSize,
         pageNum: this.pageNum,
@@ -85,12 +84,21 @@ export default{
         }
       }).then(res => res.data).then(res => {
         if (res.code === 200) {
-          this.tableData = res.data
+          this.tableData = [...this.tableData, ...res.data];
           this.total = res.total
         } else {
           alert('获取失败')
         }
       })
+    },
+    searchLoad(){
+      this.tableData = [];
+      this.pageNum = 1;
+      this.loadPost();
+    },
+    autoLoad(){
+      this.pageNum += 1;
+      this.loadPost();
     },
     loadPost2() {
       this.$axios.post(this.$httpUrl + '/post2/listPage', {
@@ -105,6 +113,8 @@ export default{
     },
     restParam() {
       this.text = '';
+      this.tableData = [];
+      this.pageNum = 1;
       this.loadPost();
     },
     save() {
@@ -252,7 +262,7 @@ export default{
                       message: '删除成功',
                       type: 'success',
                     });
-                    this.loadPost();
+                    this.loadPost2();
                   } else {
                     this.$message({
                       showClose: true,
@@ -304,6 +314,7 @@ export default{
   beforeMount() {
     this.user = JSON.parse(sessionStorage.getItem('CurUser'));
     this.loadPost();
+    this.loadPost2();
   },
   //滚动到顶部
   created() {
@@ -336,9 +347,9 @@ export default{
                 clearable
                 placeholder="查询帖子"
                 style="width: 400px;"
-                @keyup.enter.native="loadPost"></el-input>
+                @keyup.enter.native="searchLoad"></el-input>
 
-            <el-button circle icon="el-icon-search" style="margin-left: 10px;" @click="loadPost"></el-button>
+            <el-button circle icon="el-icon-search" style="margin-left: 10px;" @click="searchLoad"></el-button>
             <el-button circle icon="el-icon-refresh-left" type="info" @click="restParam"></el-button>
           </div>
 
@@ -443,7 +454,9 @@ export default{
               </el-card>
             </div>
           </div>
-
+          <div v-if="tableData.length!==0" style="width: 100%; margin: 20px 0; text-align: center;">
+            <el-button style="width: 50%;" @click="autoLoad">更 多</el-button>
+          </div>
           <el-empty v-if="tableData.length === 0">
             <el-button type="success" @click="update">发表文章 !</el-button>
           </el-empty>
