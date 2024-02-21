@@ -24,6 +24,7 @@ export default {
       addWYYPass:false,//导入网易云界面 是否有cookie
       addWYYUrl:'',//网易云登陆二维码
       addUrl:'',//导入链接
+      isLoading: false,
 
       dragging: false, //3个拖动参数 是否拖动
       offsetX: 0, //x轴
@@ -370,6 +371,8 @@ export default {
       this.addWYYShow = true;
     },
     addWYYCheck(){
+      this.isLoading=true;
+
       this.addWYYUrl='';
       this.addUrl='';
       this.addWYYPass = false;
@@ -388,6 +391,8 @@ export default {
             type: 'error'
           });
         }
+
+        this.isLoading=false;
       }).catch(error => {
         console.log(error)
         this.addWYYPass=false;
@@ -397,9 +402,12 @@ export default {
           type: 'error'
         });
         this.addWYYShow = false;
+
+        this.isLoading=false;
       })
     },
     addWYY(url){
+      this.isLoading=true;
       this.$axios.post(this.$httpWYY + '/wyyAdd',{
         id: this.user.id,
         url: url
@@ -420,6 +428,8 @@ export default {
             type: 'error'
           });
         }
+
+        this.isLoading=false;
       }).catch(error => {
         console.log(error)
         this.addWYYPass=false;
@@ -428,6 +438,7 @@ export default {
           message: '爬虫服务器链接失败啦！',
           type: 'error'
         });
+        this.isLoading=false;
       })
     },
 
@@ -629,7 +640,7 @@ function musicCheckUrl(file) {
                 <div style="margin-top:5px;">扫码完成后请点击检查</div>
               </div>
               <el-button @click="addWYYShow=false">关闭</el-button>
-              <el-button type="primary" icon="el-icon-refresh" @click="addWYYCheck">检查</el-button>
+              <el-button type="primary" :loading="isLoading" icon="el-icon-refresh" @click="addWYYCheck">{{isLoading ? "请稍后.." : "检查" }}</el-button>
             </template>
           </el-result>
         </div>
@@ -646,7 +657,7 @@ function musicCheckUrl(file) {
                         @keyup.enter.native="addWYY(addUrl)"
                         style="margin: 30px 0;"></el-input>
               <el-button @click="addWYYShow=false">关闭</el-button>
-              <el-button type="primary" @click="addWYY(addUrl)">提交</el-button>
+              <el-button type="primary" :loading="isLoading" @click="addWYY(addUrl)">{{isLoading ? "请稍后.." : "提交" }}</el-button>
             </template>
           </el-result>
         </div>
