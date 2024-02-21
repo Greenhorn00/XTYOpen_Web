@@ -266,7 +266,7 @@ export default {
 
 <template>
   <div>
-    <div style="margin-bottom: 5px; display: flex; justify-content: space-between; /* 水平居中 */">
+    <div style="margin: 10px 5px; display: flex; justify-content: space-between; /* 水平居中 */">
       <div>
         <el-input
             v-model="name"
@@ -283,8 +283,8 @@ export default {
               :value="item.value">
           </el-option>
         </el-select>
-        <el-button style="margin-left: 10px" type="primary" icon="el-icon-search" @click="loadPost">查询</el-button>
-        <el-button type="info" icon="el-icon-refresh-left" @click="restParam">重置</el-button>
+        <el-button style="margin-left: 10px" type="primary" icon="el-icon-search" @click="loadPost"></el-button>
+        <el-button type="info" icon="el-icon-refresh-left" @click="restParam"></el-button>
       </div>
       <div>
         <el-button style="margin-left: 10px" type="primary" icon="el-icon-upload" @click="add">新增</el-button>
@@ -294,39 +294,38 @@ export default {
     <div style="position: relative; ">
       <el-table
           :data="tableData"
-          :header-cell-style="{ background:'#F0F0F0', color:'#000'}"
           border
           stripe
-          style="width: 90%; margin: 20px auto; box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1)">
-        <el-table-column label="ID" prop="id" width="80">
+          style="width: 100%; margin: 10px auto;">
+        <el-table-column label="ID" prop="id" width="50">
         </el-table-column>
 
-        <el-table-column label="头像" prop="avatar" width="60">
+        <el-table-column label="头像" prop="avatar" width="65">
           <template slot-scope="scope">
-            <el-avatar :size="35" :src="scope.row.avatar" style="">
+            <el-avatar :size="40" :src="scope.row.avatar" style="">
               {{ scope.row.name.charAt(0) }}</el-avatar>
           </template>
         </el-table-column>
 
-        <el-table-column label="账号" prop="no" width="170">
+        <el-table-column label="账号" prop="no">
         </el-table-column>
 
-        <el-table-column label="名称" prop="name" width="170">
+        <el-table-column label="名称" prop="name" >
         </el-table-column>
 
-        <el-table-column label="年龄" prop="age" width="80">
+        <el-table-column label="电话" prop="phone" >
         </el-table-column>
 
-        <el-table-column label="性别" prop="sex" width="80">
+        <el-table-column label="年龄" prop="age" width="100">
+        </el-table-column>
+
+        <el-table-column label="性别" prop="sex" width="100">
           <template slot-scope="scope">
             <el-tag
                 :type="scope.row.sex === 1 ? 'primary' : 'success'"
                 disable-transitions>{{ scope.row.sex === 1 ? '男' : '女' }}
             </el-tag>
           </template>
-        </el-table-column>
-
-        <el-table-column label="电话" prop="phone" width="170">
         </el-table-column>
 
         <el-table-column label="角色" prop="roleId" width="120">
@@ -339,7 +338,7 @@ export default {
           </template>
         </el-table-column>
 
-        <el-table-column label="等级" prop="level" width="70">
+        <el-table-column label="等级" prop="level" width="80">
         </el-table-column>
 
         <el-table-column label="状态" prop="isvalid" width="80">
@@ -351,7 +350,7 @@ export default {
           </template>
         </el-table-column>
 
-        <el-table-column label="操作" prop="operate">
+        <el-table-column label="操作" prop="operate" fixed="right" width="150">
           <template slot-scope="scope">
             <el-button size="small" type="success" @click="mod(scope.row)">编辑</el-button>
             <el-popconfirm
