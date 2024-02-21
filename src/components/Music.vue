@@ -407,6 +407,15 @@ export default {
       })
     },
     addWYY(url){
+      if(!url) {
+        this.$message({
+          showClose: true,
+          message: '不能为空喔',
+          type: 'info'
+        });
+        return;
+      }
+
       this.isLoading=true;
       this.$axios.post(this.$httpWYY + '/wyyAdd',{
         id: this.user.id,
@@ -418,9 +427,6 @@ export default {
             message: '此歌单导入成功！',
             type: 'success'
           });
-          this.addUrl='';
-          this.addWYYShow=false;
-          this.musicGetWYY();
         } else if ((res.code === 400)) {
           this.$message({
             showClose: true,
@@ -438,6 +444,10 @@ export default {
           message: '爬虫服务器链接失败啦！',
           type: 'error'
         });
+
+        this.addUrl='';
+        this.addWYYShow=false;
+        this.musicGetWYY();
         this.isLoading=false;
       })
     },
