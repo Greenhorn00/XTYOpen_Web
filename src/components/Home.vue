@@ -102,6 +102,8 @@ export default {
         } else {
           alert('获取失败')
         }
+
+        this.loading = false;
       })
     },
     searchLoad(){
@@ -110,6 +112,7 @@ export default {
       this.loadPost();
     },
     autoLoad(){
+      this.loading = true;
       this.pageNum += 1;
       this.loadPost();
     },
@@ -407,7 +410,7 @@ export default {
         </el-card>
         <el-skeleton v-if="tableData.length===0&&text===''" :rows="8" style="width: 60%;" animated />
         <div style="width: 100%; margin: 20px 0; text-align: center;">
-          <el-button style="width: 50%;" @click="autoLoad">更多</el-button>
+          <el-button style="width: 50%;" v-loading="loading" @click="autoLoad">更多</el-button>
         </div>
       </div>
     </div>

@@ -509,9 +509,9 @@ function musicCheckUrl(file) {
 
 <template>
   <div >
-<!--    <el-button circle class="floating-button" icon="el-icon-headset" type="primary" @click="musicC"></el-button>-->
+    <el-button v-if="isMobile" circle class="floating-button" icon="el-icon-headset" type="primary" @click="musicC"></el-button>
 
-    <div style="position: fixed;right: 5px;bottom: 5px;width: 300px;height: 80px; z-index: 100;" ref="audioPlayer" @mousedown="startDrag" v-if="smallMusicShow">
+    <div v-if="!isMobile&&smallMusicShow" style="position: fixed;right: 5px;bottom: 5px;width: 300px;height: 80px; z-index: 100;" ref="audioPlayer" @mousedown="startDrag">
       <div class="audio-player">
         <div class="album-cover">
           <el-avatar :class="{ 'rotate-avatar': !this.audio.paused }" :size="64" :src="musicSearch ? musicSearch : musicIMG"
