@@ -516,6 +516,9 @@ export default {
 </template>
 
 <style scoped>
+/deep/ .el-divider--horizontal{
+  margin: 10px 0 15px 0;
+}
 
 .MobileBack{
   z-index: -100;
