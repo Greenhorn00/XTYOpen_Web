@@ -29,6 +29,7 @@ export default {
       haveUser: false,
       isMobile: false,
       haveUserIs:'',
+      code:'',
       GoogleId: "903775319941-h0b8q3qvip0b7t6dubfa6ir9pqd65r6c.apps.googleusercontent.com",
       httpsBack: this.$httpUrl,
       sexs: [
@@ -265,11 +266,69 @@ export default {
     checkIfMobile() {
       this.isMobile = window.innerWidth < 768; // Adjust the value based on your requirements
     },
+    qqLog(){
+      this.$axios.get(this.$httpUrl + '/user/qqlog?code=' + this.code).then(res => res.data).then(res => {
+        if (res.code === 200) {
+          this.$notify({
+            title: res.data.user.name,
+            message: '欢迎回家',
+            type: 'success'
+          });
+          // 储存
+          sessionStorage.setItem("CurUser", JSON.stringify(res.data.user));
+          this.$store.commit("setMenu", res.data.menu); // 设置传来路由
+          // 以对象的形式保存账号密码
+          const user = {
+            no: res.data.user.no,
+            password: res.data.user.password,
+            name: res.data.user.name,
+            avatar: res.data.user.avatar
+          };
+          localStorage.setItem("userLogIn", JSON.stringify(user));//记住密码
+          this.loading=false;
+          //跳转
+          this.$router.replace('/Index')
+        } else {
+          this.loading=false;
+          this.confirm_disabled = false;
+          this.$message({
+            showClose: true,
+            message: '账号或密码错误',
+            type: 'error',
+          });
+        }
+      }).catch(error => {
+        // 在请求失败或超时时执行的操作
+        console.log(error);
+        this.loading = false;
+        this.confirm_disabled = false;
+        this.$message({
+          showClose: true,
+          message: '请求失败或超时，请重试',
+          type: 'error',
+        });
+        this.$alert(' <a href="'+ this.httpsBack + '/user/hi" target="_blank"> <img src="'+ require('../assets/img/help.png') +'" alt="" style="width: 100%;height:100%; display:block; margin: 10px 0;"> <button style="width: 100%;height: 50px; font-size: large;">前往授权此网站</button></a>', '抱歉`(*>﹏<*)′需要您的授权', {
+          dangerouslyUseHTMLString: true,
+          confirmButtonText: '好的，我已点击',
+        });
+      });
+    },
+    qqClick(){
+      this.$axios.get(this.$httpUrl + '/user/qqLogin').then(res => res.data).then(res => {
+        window.location.href = res;
+      })
+    }
 
   },
   mounted() {
     this.checkIfMobile();
     window.addEventListener('resize', this.checkIfMobile);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    this.code = urlParams.get('code');
+    if(this.code!==''){
+      this.qqLog();
+    }
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.checkIfMobile);
@@ -369,6 +428,7 @@ export default {
               </el-button>
             </el-col>
           </el-form-item>
+          <el-button @click="qqClick">qq</el-button>
           <div style="width: 100%;display: flex; justify-content: center;">
             <div id="g_id_signin" class="g_id_signin"></div>
           </div>
