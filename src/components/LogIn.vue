@@ -267,6 +267,7 @@ export default {
       this.isMobile = window.innerWidth < 768; // Adjust the value based on your requirements
     },
     qqLog(){
+      if(!this.code||this.code===''||this.code==null||this.code==="null") return;
       this.$axios.get(this.$httpUrl + '/user/qqlog?code=' + this.code).then(res => res.data).then(res => {
         if (res.code === 200) {
           this.$notify({
@@ -301,7 +302,7 @@ export default {
           this.confirm_disabled = false;
           this.$message({
             showClose: true,
-            message: '账号或密码错误',
+            message: '状态错误',
             type: 'error',
           });
         }
