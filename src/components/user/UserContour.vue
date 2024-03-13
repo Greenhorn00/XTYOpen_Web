@@ -56,7 +56,7 @@ export default {
 
         no: [
           {required: true, message: '请输入账号', trigger: 'blur'},
-          {min: 5, max: 10, message: '长度在 4 到 10 个字符', trigger: 'blur'},
+          {min: 4, max: 19, message: '长度在 4 到 19 个字符', trigger: 'blur'},
           {validator: checkOnlyNo, trigger: 'blur'}
         ],
         name: [
