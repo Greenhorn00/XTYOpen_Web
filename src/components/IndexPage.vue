@@ -19,6 +19,16 @@ export default {
     this.checkIfMobile();
     window.addEventListener('resize', this.checkIfMobile);
   },
+  created() {
+    // 获取当前页面的 URL
+    let currentUrl = window.location.href;
+    // 移除参数部分，即问号及其后面的内容
+    let index = currentUrl.indexOf('?');
+    if (index !== -1) {
+      currentUrl = currentUrl.slice(0, index);
+    }
+    window.location.href = currentUrl;
+  },
   methods:{
     doCollapse(){
       console.log('收')
