@@ -402,25 +402,26 @@ export default {
               </div>
             </el-col>
           </el-form-item>
-          <div v-if="!this.haveUser">
+          <div v-if="!this.haveUser" style="margin: 20px 0;">
             <el-form-item label="" prop="no">
-              <el-col >
+              <el-col style="text-align: center;">
                 <el-input
                     v-model="loginForm.no"
                     clearable
                     placeholder="账号"
-                    type="text">
+                    type="text" style="width: 85%;">
                 </el-input>
               </el-col>
             </el-form-item>
             <el-form-item label="" prop="password">
-              <el-col >
+              <el-col style="text-align: center;">
                 <el-input
                     v-model="loginForm.password"
                     clearable
                     placeholder="密码"
                     show-password
-                    type="password" @keyup.enter.native="confirm">
+                    type="password" style="width: 85%;"
+                    @keyup.enter.native="confirm">
                 </el-input>
               </el-col>
             </el-form-item>
