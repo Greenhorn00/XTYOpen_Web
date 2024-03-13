@@ -324,7 +324,7 @@ export default {
     },
     thirdClick(type){
       this.thirdLoading = true;
-      this.$axios.get(this.$httpUrl + '/user/'+type+'Login').then(res => res.data).then(res => {
+      this.$axios.get(this.$httpUrl + '/user/thirdLogin?type=' + type).then(res => res.data).then(res => {
         window.open(res, '_blank');
         this.thirdLoading = false;
       })
