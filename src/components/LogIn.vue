@@ -287,6 +287,11 @@ export default {
           localStorage.setItem("userLogIn", JSON.stringify(user));//记住密码
           this.loading=false;
           //跳转
+          // 获取当前页面的 URL
+          let currentUrl = window.location.href;
+          // 移除参数部分，即问号及其后面的内容
+          let index = currentUrl.indexOf('?');
+          let baseUrl = index === -1 ? currentUrl : currentUrl.slice(0, index);
           this.$router.replace('/Index')
         } else {
           this.loading=false;
