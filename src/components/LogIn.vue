@@ -24,12 +24,14 @@ export default {
     };
     return {
       loading: false,
+      thirdLoading: false,
       confirm_disabled: false,
       centerDialogVisible: false,
       haveUser: false,
       isMobile: false,
       haveUserIs:'',
       code:'',
+      typeLog:'',
       GoogleId: "903775319941-h0b8q3qvip0b7t6dubfa6ir9pqd65r6c.apps.googleusercontent.com",
       httpsBack: this.$httpUrl,
       sexs: [
@@ -266,9 +268,9 @@ export default {
     checkIfMobile() {
       this.isMobile = window.innerWidth < 768; // Adjust the value based on your requirements
     },
-    qqLog(){
+    thirdLog(){
       if(!this.code||this.code===''||this.code==null||this.code==="null") return;
-      this.$axios.get(this.$httpUrl + '/user/qqlog?code=' + this.code).then(res => res.data).then(res => {
+      this.$axios.get(this.$httpUrl + '/user/thirdLog?type='+ this.typeLog +'&code=' + this.code).then(res => res.data).then(res => {
         if (res.code === 200) {
           this.$notify({
             title: res.data.user.name,
@@ -320,9 +322,11 @@ export default {
         });
       });
     },
-    qqClick(){
-      this.$axios.get(this.$httpUrl + '/user/qqLogin').then(res => res.data).then(res => {
+    thirdClick(type){
+      this.thirdLoading = true;
+      this.$axios.get(this.$httpUrl + '/user/'+type+'Login').then(res => res.data).then(res => {
         window.open(res, '_blank');
+        this.thirdLoading = false;
       })
     }
 
@@ -333,8 +337,9 @@ export default {
 
     const urlParams = new URLSearchParams(window.location.search);
     this.code = urlParams.get('code');
+    this.typeLog = urlParams.get('type');
     if(this.code&&this.code!=='null'&&this.code!==''){
-      this.qqLog();
+      this.thirdLog();
     }
   },
   beforeDestroy() {
@@ -420,8 +425,8 @@ export default {
               </el-col>
             </el-form-item>
           </div>
-          <el-form-item>
-            <el-col style="display: flex; justify-content: space-between;">
+          <el-form-item style="display: flex;justify-content: center;">
+            <el-col style="display: flex; justify-content: space-between;width: 390px;">
               <el-button style="width: 30%; margin-top: 5px; font-size: large;"
                          @click="add"
                          v-if="!this.haveUser"> 注册
@@ -435,11 +440,17 @@ export default {
               </el-button>
             </el-col>
           </el-form-item>
-          <div @click="qqClick">
-            <svg t="1710304748071" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1660" width="50" height="50"><path d="M824.8 613.2c-16-51.4-34.4-94.6-62.7-165.3C766.5 262.2 689.3 112 511.5 112 331.7 112 256.2 265.2 261 447.9c-28.4 70.8-46.7 113.7-62.7 165.3-34 109.5-23 154.8-14.6 155.8 18 2.2 70.1-82.4 70.1-82.4 0 49 25.2 112.9 79.8 159-26.4 8.1-85.7 29.9-71.6 53.8 11.4 19.3 196.2 12.3 249.5 6.3 53.3 6 238.1 13 249.5-6.3 14.1-23.8-45.3-45.7-71.6-53.8 54.6-46.2 79.8-110.1 79.8-159 0 0 52.1 84.6 70.1 82.4 8.5-1.1 19.5-46.4-14.5-155.8z" p-id="1661"></path></svg>
-          </div>
           <div style="width: 100%;display: flex; justify-content: center;">
             <div id="g_id_signin" class="g_id_signin"></div>
+          </div>
+          <el-divider ></el-divider>
+          <div style="display: flex;justify-content: center;" v-loading="thirdLoading">
+            <div style="cursor: pointer;margin-right: 50px;" @click="thirdClick('qq')" >
+              <svg  t="1710304748071" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1660" width="30" height="30"><path d="M824.8 613.2c-16-51.4-34.4-94.6-62.7-165.3C766.5 262.2 689.3 112 511.5 112 331.7 112 256.2 265.2 261 447.9c-28.4 70.8-46.7 113.7-62.7 165.3-34 109.5-23 154.8-14.6 155.8 18 2.2 70.1-82.4 70.1-82.4 0 49 25.2 112.9 79.8 159-26.4 8.1-85.7 29.9-71.6 53.8 11.4 19.3 196.2 12.3 249.5 6.3 53.3 6 238.1 13 249.5-6.3 14.1-23.8-45.3-45.7-71.6-53.8 54.6-46.2 79.8-110.1 79.8-159 0 0 52.1 84.6 70.1 82.4 8.5-1.1 19.5-46.4-14.5-155.8z" p-id="1661"></path></svg>
+            </div>
+            <div style="cursor: pointer;" @click="thirdClick('wx')" >
+              <svg t="1710306784769" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2683" width="30" height="30"><path d="M371.227 119.452c-187.548 0-341.168 127.837-341.168 290.157 0 93.698 51.116 170.614 136.491 230.205l-34.123 102.654 119.257-59.831c42.687 8.474 76.915 17.144 119.497 17.144 10.702 0 21.329-0.527 31.85-1.37-6.653-22.834-10.521-46.706-10.521-71.482 0-148.969 128.002-269.927 290.066-269.927 11.048 0 21.991 0.813 32.859 2.017-29.517-137.44-176.454-239.567-344.208-239.567z m-110.828 230.34c-25.558 0-51.372-17.129-51.372-42.702 0-25.679 25.814-42.567 51.372-42.567s42.597 16.904 42.597 42.567c-0.015 25.573-17.039 42.703-42.597 42.703z m238.77 0c-25.574 0-51.238-17.129-51.238-42.702 0-25.679 25.664-42.567 51.237-42.567 25.694 0 42.703 16.904 42.703 42.567 0 25.573-17.024 42.703-42.703 42.703z" p-id="2684"></path><path d="M993.971 622.85c0-136.31-136.49-247.484-289.78-247.484-162.32 0-290.172 111.174-290.172 247.484 0 136.612 127.852 247.56 290.172 247.56 33.972 0 68.215-8.55 102.353-17.114l93.593 51.237-25.663-85.27C942.945 767.921 993.97 699.796 993.97 622.85z m-383.87-42.627c-16.994 0-34.138-16.873-34.138-34.108 0-17.023 17.144-34.153 34.138-34.153 25.814 0 42.703 17.13 42.703 34.153 0 17.235-16.889 34.108-42.703 34.108z m187.668 0c-16.873 0-33.897-16.873-33.897-34.108 0-17.023 17.024-34.153 33.897-34.153 25.558 0 42.702 17.13 42.702 34.153 0 17.235-17.144 34.108-42.702 34.108z" p-id="2685"></path></svg>
+            </div>
           </div>
 
         </el-form>
@@ -505,6 +516,7 @@ export default {
 </template>
 
 <style scoped>
+
 .MobileBack{
   z-index: -100;
   position: fixed;
@@ -546,7 +558,7 @@ export default {
   }
 
   .loginOut {
-    width: 325px;
+    width: 400px;
     padding: 50px 15px 25px 15px;
     background: transparent;
     box-shadow: 0 15px 20px rgba(0, 0, 0, 0);
