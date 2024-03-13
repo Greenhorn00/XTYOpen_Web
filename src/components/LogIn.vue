@@ -294,7 +294,7 @@ export default {
           if (index !== -1) {
             currentUrl = currentUrl.slice(0, index);
           }
-          window.location.href = currentUrl;
+          console.log(currentUrl)
           // 直接在下一行调用 replace 方法
           this.$router.replace('/Index');
         } else {
