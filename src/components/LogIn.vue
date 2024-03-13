@@ -335,7 +335,7 @@ export default {
 
     const urlParams = new URLSearchParams(window.location.search);
     this.code = urlParams.get('code');
-    if(this.code!==''){
+    if(this.code&&this.code!=='null'&&this.code!==''){
       this.qqLog();
     }
   },
