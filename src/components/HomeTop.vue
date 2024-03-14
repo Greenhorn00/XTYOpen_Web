@@ -164,7 +164,7 @@ export default {
     position: relative;
     width: 100%;
     height: 100vh;
-    background-image: url("../assets/img/cloud00.jpg");
+    background-image: url("../assets/img/bg.jpg");
     background-size: cover ;
     background-position: bottom;
     display: flex;
