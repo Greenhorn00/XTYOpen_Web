@@ -511,7 +511,7 @@ function musicCheckUrl(file) {
   <div >
     <el-button v-if="isMobile" circle class="floating-button" icon="el-icon-headset" type="primary" @click="musicC"></el-button>
 
-    <div v-if="!isMobile&&smallMusicShow" style="position: fixed;right: 5px;bottom: 5px;width: 300px;height: 80px; z-index: 100;" ref="audioPlayer" @mousedown="startDrag">
+    <div v-if="!isMobile&&smallMusicShow" style="position: fixed;right: 5px;bottom: 5px;width: 200px;height: 80px; z-index: 100;" ref="audioPlayer" @mousedown="startDrag">
       <div class="audio-player">
         <div class="album-cover">
           <el-avatar :class="{ 'rotate-avatar': !this.audio.paused }" :size="64" :src="musicSearch ? musicSearch : musicIMG"
@@ -531,12 +531,12 @@ function musicCheckUrl(file) {
           </div>
           <div class="progress-bar">
             <el-progress :percentage="currentPercentage?currentPercentage:0" stroke-width="4"
-                         color="rgba(218,218,218,0.7)" define-back-color="#4f4f4f" :show-text=false></el-progress>
+                         color="#2d2d2d" define-back-color="#dadada" :show-text=false></el-progress>
           </div>
           <div class="buttons">
             <button class="pause-btn" @click="mDown"><svg viewBox="0 0 16 16" class="bi bi-skip-backward-fill" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg"> <path d="M.5 3.5A.5.5 0 0 0 0 4v8a.5.5 0 0 0 1 0V8.753l6.267 3.636c.54.313 1.233-.066 1.233-.697v-2.94l6.267 3.636c.54.314 1.233-.065 1.233-.696V4.308c0-.63-.693-1.01-1.233-.696L8.5 7.248v-2.94c0-.63-.692-1.01-1.233-.696L1 7.248V4a.5.5 0 0 0-.5-.5z"></path> </svg></button>
-            <button class="play-btn" @click="musicPlay"><svg viewBox="0 0 16 16" class="bi bi-play-fill" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg" style="color: white"> <path fill="white" d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"></path> </svg></button>
-            <button class="pause-btn" @click="musicPause"><svg viewBox="0 0 16 16" class="bi bi-pause-fill" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg" style="color: white"> <path fill="white" d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5zm5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5z"></path> </svg></button>
+            <button class="play-btn" @click="musicPlay"><svg viewBox="0 0 16 16" class="bi bi-play-fill" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg" style="color: #2d2d2d"> <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"></path> </svg></button>
+            <button class="pause-btn" @click="musicPause"><svg viewBox="0 0 16 16" class="bi bi-pause-fill" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg" style="color: #2d2d2d"> <path d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5zm5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5z"></path> </svg></button>
           </div>
         </div>
       </div>
@@ -786,9 +786,10 @@ function musicCheckUrl(file) {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 300px;
+  width: 200px;
   height: 80px;
-  background-color: rgba(110, 110, 110, 0.9);
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 10px #b4b4b4;
   border-radius: 8px;
   padding: 8px;
   box-sizing: border-box;
@@ -813,9 +814,9 @@ function musicCheckUrl(file) {
 }
 
 .song-title {
-  max-width: 200px;
+  max-width: 100px;
   font-size: 16px;
-  color: #fff;
+  color: #2d2d2d;
   margin: 0;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
@@ -854,7 +855,7 @@ function musicCheckUrl(file) {
 .play-btn,
 .pause-btn {
   font-size: 16px;
-  color: #fff;
+  color: #2d2d2d;
   margin-right: 8px;
   transition: transform 0.2s ease-in-out;
 }
