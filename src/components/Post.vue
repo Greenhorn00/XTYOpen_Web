@@ -10,7 +10,6 @@ export default {
       isMobile: false,
       isVisible: false, //回到顶部
       user:'',
-
     }
   },
   beforeMount() {
@@ -109,6 +108,32 @@ export default {
         document.body.removeChild(textArea); // 移除插入的文本域节点
       }
     },
+    collect(postId){
+      this.$axios.get(this.$httpUrl + '/userpost/add?userId=' + this.user.id + '&postId=' + postId).then(res => res.data)
+          .then(res => {
+            if (res.code === 200) {
+              if (res.data === 409){
+                this.$message({
+                  showClose: true,
+                  message: '您已收藏',
+                  type: 'success',
+                });
+              }else {
+                this.$message({
+                  showClose: true,
+                  message: '收藏成功',
+                  type: 'success',
+                });
+              }
+            } else {
+              this.$message({
+                showClose: true,
+                message: '服务器开小差啦~请稍后重试',
+                type: 'error'
+              });
+            }
+          })
+    },
     goBack() {
       this.$router.replace('/Home') // Go back one step in history
     },
@@ -181,6 +206,8 @@ export default {
                      type="warning" @click="copy(item.post.name)"></el-button>
           <el-button circle icon="el-icon-chat-dot-square" size="small" style="margin-left: 10px;"
                      type="primary" @click="post2(item.post.id)"></el-button>
+          <el-button circle icon="el-icon-star-off" size="small" style="margin-left: 10px;"
+                     type="info" @click="collect(item.post.id)"></el-button>
         </div>
 
         <div v-for="(item2,i) in item.post2" :key="i" >

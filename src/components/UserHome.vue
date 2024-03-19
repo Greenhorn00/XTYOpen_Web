@@ -13,6 +13,7 @@ export default {
       user: JSON.parse(sessionStorage.getItem('CurUser')),
       loading: false,
       deadline5: new Date("2024-03-02"),
+      collectPost:[],
       colors: [
         {color: '#f56c6c', percentage: 20},
         {color: '#e6a23c', percentage: 40},
@@ -54,8 +55,31 @@ export default {
               this.user = res.data;
             }
           })
+      this.$nextTick(() => {
+        this.$axios.get(this.$httpUrl + '/userpost/list?userId=' + this.user.id).then(res => res.data)
+            .then(res => {
+              if (res.code === 200) {
+                this.collectPost = res.data;
+              }
+            })
+      })
     },
-
+    goToPost(postId) {
+      this.$router.replace('/Post/' + postId);
+    },
+    delCollectPost(postId){
+      this.$axios.get(this.$httpUrl + '/userpost/del?userId=' + this.user.id + '&postId=' + postId).then(res => res.data)
+          .then(res => {
+            if (res.code === 200) {
+              this.$message({
+                showClose: true,
+                message: '已取消收藏',
+                type: 'success',
+              });
+              this.loadPost();
+            }
+          })
+    },
     resetForm(formName) {
       this.$refs[formName].resetFields();
     },
@@ -155,6 +179,7 @@ export default {
     }
   },
   created() {
+    this.loadPost();
     this.interval = setInterval(this.autoLoad, 60000); // 30秒
   },
   beforeDestroy() {
@@ -238,19 +263,21 @@ export default {
           </el-button>
         </div>
 
-        <el-descriptions :column="2" direction="vertical" style="width: 300px;height: 320px;margin: 0 0 30px 0;padding: 20px 20px; box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1)"
-                         title="文章发表">
-          <el-descriptions-item label="文章数">{{ this.user.postnum }}</el-descriptions-item>
-          <el-descriptions-item label="点赞量">{{ this.user.likes }}</el-descriptions-item>
-          <el-descriptions-item label="放假：">
-            <el-statistic
-                :value="deadline5"
-                format="DD天HH小时mm分钟"
-                time-indices
-                title="🚩距离开学还有："
-            >
-            </el-statistic>
+        <el-descriptions class="postS" :column="1" direction="vertical" style="padding: 20px 20px; box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1)"
+                         title="我的收藏">
+          <el-descriptions-item :label=" collectPost.length + ' 篇文章'" >
+            <div style="height: 100%;overflow-y: auto;">
+              <div class="postTitle" v-for="(item,i) in collectPost" :key="i">
+                <div @click="goToPost(item.post.id)"
+                     style="width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                  {{item.post.title}}
+                </div>
+                <i @click="delCollectPost(item.post.id)" class="el-icon-delete" ></i>
+              </div>
+            </div>
+            <el-empty v-if="collectPost.length===0" description="快添加喜欢的文章叭" :image-size="120"></el-empty>
           </el-descriptions-item>
+
         </el-descriptions>
 
         <div class="upload-demo">
@@ -319,6 +346,24 @@ export default {
 *{
   user-select: none;
 }
+/deep/ .el-upload{
+  width: 100%;
+}
+/deep/ .el-upload .el-upload-dragger{
+  width: 100%;
+  height: 240px;
+}
+.postTitle{
+  color: #777777;
+  margin-bottom: 5px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.postTitle :hover{
+  color: black;
+}
 @media (min-width: 768px) {
   .dengJi {
     transform: scale(0.9);
@@ -343,12 +388,15 @@ export default {
 
   .upload-demo {
     text-align: center;
-    width: 400px;
+    width: 250px;
     height: 320px;
     margin-left: 50px;
     position: relative;
     top: -15px;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1)
+  }
+  .postS{
+    width: 450px;height: 320px;margin: 0 0 30px 0;
   }
 
 }
@@ -375,18 +423,15 @@ export default {
 
   .upload-demo {
     text-align: center;
-    width: 300px;
+    width: 90%;
     height: 320px;
     margin-bottom: 20px;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1)
   }
 
-}
-/deep/ .el-upload{
-  width: 100%;
-}
-/deep/ .el-upload .el-upload-dragger{
-  width: 100%;
-  height: 240px;
+  .postS{
+    width: 90%;height: 320px;margin: 0 0 30px 0;
+  }
+
 }
 </style>
