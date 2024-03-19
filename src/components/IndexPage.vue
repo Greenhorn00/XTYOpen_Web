@@ -12,7 +12,7 @@ export default {
       isMobile: false, //手机端
       aside_width:'64px',//200px
       icon:"el-icon-s-unfold",
-      headerClass:"top",
+      headerClass:"",
     }
   },
   mounted() {
