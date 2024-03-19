@@ -275,7 +275,7 @@ export default {
                 <i @click="delCollectPost(item.post.id)" class="el-icon-delete" ></i>
               </div>
             </div>
-            <el-empty v-if="collectPost.length===0" description="快添加喜欢的文章叭" :image-size="80" style="margin-bottom: 20px;"></el-empty>
+            <el-empty v-if="collectPost.length===0" description="快添加喜欢的文章叭" :image-size="80"></el-empty>
           </el-descriptions-item>
 
         </el-descriptions>
