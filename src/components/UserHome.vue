@@ -55,14 +55,14 @@ export default {
               this.user = res.data;
             }
           })
-      this.$nextTick(() => {
-        this.$axios.get(this.$httpUrl + '/userpost/list?userId=' + this.user.id).then(res => res.data)
-            .then(res => {
-              if (res.code === 200) {
-                this.collectPost = res.data;
-              }
-            })
-      })
+    },
+    loadCollect(){
+      this.$axios.get(this.$httpUrl + '/userpost/list?userId=' + this.user.id).then(res => res.data)
+          .then(res => {
+            if (res.code === 200) {
+              this.collectPost = res.data;
+            }
+          })
     },
     goToPost(postId) {
       this.$router.replace('/Post/' + postId);
@@ -76,7 +76,7 @@ export default {
                 message: '已取消收藏',
                 type: 'success',
               });
-              this.loadPost();
+              this.loadCollect();
             }
           })
     },
@@ -179,7 +179,7 @@ export default {
     }
   },
   created() {
-    this.loadPost();
+    this.loadCollect();
     this.interval = setInterval(this.autoLoad, 60000); // 30秒
   },
   beforeDestroy() {
