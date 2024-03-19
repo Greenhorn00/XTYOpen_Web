@@ -268,11 +268,11 @@ export default {
           <el-descriptions-item :label=" collectPost.length + ' 篇文章'" >
             <div style="height: 100%;overflow-y: auto;">
               <div class="postTitle" v-for="(item,i) in collectPost" :key="i">
-                <div @click="goToPost(item.post.id)"
+                <div @click="goToPost(item.postId)"
                      style="width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                  {{item.post.title}}
+                  {{item.title}}
                 </div>
-                <i @click="delCollectPost(item.post.id)" class="el-icon-delete" ></i>
+                <i @click="delCollectPost(item.postId)" class="el-icon-delete" ></i>
               </div>
             </div>
             <el-empty v-if="collectPost.length===0" description="快添加喜欢的文章叭" :image-size="80"></el-empty>
