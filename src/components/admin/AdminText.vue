@@ -19,7 +19,8 @@ export default {
         pageSize: this.pageSize,
         pageNum: this.pageNum,
         param: {
-          name: this.text
+          name: this.text,
+          full: "yes"
         }
       }).then(res => res.data).then(res => {
         if (res.code === 200) {
