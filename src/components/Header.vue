@@ -16,7 +16,7 @@ export default {
     }
   },
   created() {
-    this.$router.push("/Home");
+    // this.$router.push("/Home");
     this.setGreetingMessage(); // 在组件创建时设置问候消息
     setInterval(this.setGreetingMessage, 3600000); // 每小时更新一次问候消息
   },

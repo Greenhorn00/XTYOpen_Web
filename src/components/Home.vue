@@ -266,7 +266,8 @@ export default {
       this.isMobile = window.innerWidth < 768; // Adjust the value based on your requirements
     },
     goToPost(postId) {
-      this.$router.replace('/Post/' + postId);
+      // this.$router.replace('/Post/' + postId);
+      window.open('/#/Post/' + postId, '_blank');
     },
     //图片上传成功钩子函数
     handleAvatarSuccess(res) {
@@ -410,7 +411,7 @@ export default {
         </el-card>
         <el-skeleton v-if="tableData.length===0&&text===''" :rows="8" style="width: 60%;" animated />
         <div style="width: 100%; margin: 20px 0; text-align: center;">
-          <el-button style="width: 50%;" v-loading="loading" @click="autoLoad">更多</el-button>
+          <el-button style="width: 50%;" :loading="loading" @click="autoLoad">{{ loading ? '稍等片刻 ...' : '更 多' }}</el-button>
         </div>
       </div>
     </div>

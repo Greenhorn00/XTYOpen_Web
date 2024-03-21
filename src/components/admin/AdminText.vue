@@ -6,6 +6,7 @@ export default {
     return {
       isMobile: false, //手机端
       isVisible: false,
+      loading:false,
       pageSize: 12,
       pageNum: 1,
       user: '',
@@ -15,6 +16,7 @@ export default {
   },
   methods: {
     loadPost() {
+      this.loading = true;
       this.$axios.post(this.$httpUrl + '/post/listPage', {
         pageSize: this.pageSize,
         pageNum: this.pageNum,
@@ -35,6 +37,7 @@ export default {
         } else {
           alert('获取失败')
         }
+        this.loading = false;
       })
     },
     searchLoad(){
@@ -159,8 +162,7 @@ export default {
 </script>
 
 <template>
-  <div style="background-color: #dadada">
-
+  <div >
     <el-button v-if="isVisible" circle class="scroll-to-top" icon="el-icon-top" @click="scrollToTop"></el-button>
 
     <div style="display: flex;  flex-direction:column; justify-content: center; padding-top: 20px;">
@@ -174,6 +176,24 @@ export default {
 
         <el-button circle icon="el-icon-search" style="margin-left: 10px;" @click="searchLoad"></el-button>
         <el-button circle icon="el-icon-refresh-left" type="info" @click="restParam"></el-button>
+      </div>
+
+      <div v-if="loading" style="margin-top: 20px;">
+        <el-row type="flex" :gutter="10" justify="center">
+          <el-col :span="10">
+            <el-skeleton animated>
+              <template slot="template">
+                <el-skeleton-item variant="image" style="width: 100%; height: 300px;" />
+              </template>
+            </el-skeleton>
+          </el-col>
+          <el-col :span="10">
+            <el-skeleton :rows="9" animated />
+          </el-col>
+        </el-row>
+        <el-row type="flex" justify="center">
+          <el-col :span="20"><el-skeleton :rows="10" animated /></el-col>
+        </el-row>
       </div>
 
       <div style="display: flex;flex-wrap: wrap; justify-content: center; align-items: stretch;  margin-top: 10px;">
@@ -219,8 +239,8 @@ export default {
                 </div>
               </div>
               <div style="font-weight: 10; font-size: 14px; ">
-<!--                {{ new Date(item2.time).getMonth() + 1 }}/{{ new Date(item2.time).getDate() }}
-                {{ new Date(item2.time).getHours() }}:{{ new Date(item2.time).getMinutes() }}-->
+                <!--                {{ new Date(item2.time).getMonth() + 1 }}/{{ new Date(item2.time).getDate() }}
+                                {{ new Date(item2.time).getHours() }}:{{ new Date(item2.time).getMinutes() }}-->
                 <el-button icon="el-icon-delete-solid" size="mini" style="margin-left: 10px; margin-top: 10px;"
                            type="warning" @click="delPost2(item2.id)">删除
                 </el-button>
@@ -229,7 +249,7 @@ export default {
           </div>
         </el-card>
         <div style="width: 100%; margin: 20px 0; text-align: center;">
-          <el-button style="width: 50%;" @click="autoLoad">更多</el-button>
+          <el-button :loading="loading" style="width: 50%;" @click="autoLoad">{{loading? "请稍后...":"更多"}}</el-button>
         </div>
       </div>
     </div>
