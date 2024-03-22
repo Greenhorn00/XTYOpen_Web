@@ -215,12 +215,12 @@ export default {
       console.log(`user email ${payload.email}`)
       this.$axios.post(this.$httpUrl + '/user/loginWithGoogle', {
         id: '',
-        no: payload.sub.substr(0, 9),
+        no: payload.sub,
         name: payload.name,
         password: '123',
         age: 18,
         sex: 0,
-        phone: payload.email.substr(0, 17),
+        phone: payload.email,
         roleId: '2',
         isvalid: 'Y',
         level: '0',
