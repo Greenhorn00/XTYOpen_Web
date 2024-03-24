@@ -28,7 +28,7 @@ export default {
     }
   },
   methods:{
-    updataOpen(){
+    updateOpen(){
       this.drawerUp = true;
     },
 
@@ -110,9 +110,9 @@ export default {
 <template>
 <div>
 
-  <el-button class="floating-button" icon="el-icon-upload" type="primary" @click="drawer=true;" :disabled="sizeFull">上传</el-button>
+  <el-button class="floating-button" icon="el-icon-upload" type="primary" @click="updateOpen" :disabled="sizeFull">上传</el-button>
   <el-empty v-if="FileList.length === 0">
-    <el-button type="success" @click="updataOpen">上传文件 !</el-button>
+    <el-button type="success" @click="updateOpen">上传文件 !</el-button>
   </el-empty>
   <div style="height: 80vh; overflow-y: auto;" v-if="FileList.length !== 0">
     <div style="display: flex;justify-content: start;align-items: center; margin-left: 2.5vw;margin-top: 10px;">
