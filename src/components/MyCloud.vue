@@ -4,7 +4,7 @@ export default {
   name: "Header",
   data(){
     return{
-      drawer:false,
+      drawerUp:false,
       postUrl: this.$httpUrl,
       sizeGB: 0,
       sizeT: 0,
@@ -28,6 +28,9 @@ export default {
     }
   },
   methods:{
+    updataOpen(){
+      this.drawer = true;
+    },
 
     fileGet() {
       this.$axios.get(this.$httpUrl + '/files/list?userId=' + this.user.id).then(res => res.data).then(res => {
@@ -88,7 +91,7 @@ export default {
       }
     },
     checkIfMobile() {
-      this.isMobile = window.innerWidth < 768; // Adjust the value based on your requirements
+      this.isMobile = window.innerWidth < 800; // Adjust the value based on your requirements
     },
     format(percentage) {
       return percentage >= 100 ? '满' : `${percentage.toFixed(0)}%`;
@@ -109,7 +112,7 @@ export default {
 
   <el-button class="floating-button" icon="el-icon-upload" type="primary" @click="drawer=true;" :disabled="sizeFull">上传</el-button>
   <el-empty v-if="FileList.length === 0">
-    <el-button type="success" @click="drawer=true;">上传文件 !</el-button>
+    <el-button type="success" @click="updataOpen">上传文件 !</el-button>
   </el-empty>
   <div style="height: 80vh; overflow-y: auto;" v-if="FileList.length !== 0">
     <div style="display: flex;justify-content: start;align-items: center; margin-left: 2.5vw;margin-top: 10px;">
