@@ -29,7 +29,7 @@ export default {
   },
   methods:{
     updataOpen(){
-      this.drawer = true;
+      this.drawerUp = true;
     },
 
     fileGet() {
@@ -151,7 +151,7 @@ export default {
 
   </div>
 
-  <el-dialog :visible.sync="drawer" center title="上传文件" :fullscreen=isMobile>
+  <el-dialog :visible.sync="drawerUp" center title="上传文件" :fullscreen=isMobile>
     <div style="text-align: center;">
       <el-upload
           :action="`${this.postUrl}/files/up/${this.user.id}`"
@@ -163,7 +163,7 @@ export default {
       </el-upload>
     </div>
     <div slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="drawer = false">好的</el-button>
+      <el-button type="primary" @click="drawerUp = false">好的</el-button>
     </div>
   </el-dialog>
 </div>
