@@ -4,12 +4,12 @@ export default {
   name: "Header",
   data(){
     return{
-      drawerUp:false,
       postUrl: this.$httpUrl,
       sizeGB: 0,
       sizeT: 0,
       sizeFull: false,
       isMobile: false,
+      tab:'my',
       customColors: [
         {color: '#0c9600', percentage: 20},
         {color: '#005b00', percentage: 40},
@@ -25,18 +25,18 @@ export default {
         // },
 
       ],
+      publicFile:[],
     }
   },
   methods:{
-    updateOpen(){
-      this.drawerUp = true;
-    },
 
     fileGet() {
       this.$axios.get(this.$httpUrl + '/files/list?userId=' + this.user.id).then(res => res.data).then(res => {
         if (res.code === 200) {
+          console.log(res.data)
           this.FileList = res.data.list;
           this.sizeGB = res.data.size;
+          this.publicFile = res.data.publicList;
           this.sizeT = this.sizeGB/0.05 > 100 ? 100 : this.sizeGB/0.05;
           if (this.sizeGB/0.05 >= 100) this.sizeFull = true;
         } else {
@@ -109,24 +109,23 @@ export default {
 
 <template>
 <div>
+  <el-tabs type="border-card" v-model="tab" style="min-height: 90vh;">
+    <el-tab-pane label="我的云盘" name="my">
+      <el-empty v-if="FileList.length === 0">
+      </el-empty>
+      <div style="height: 80vh; overflow-y: auto;" v-if="FileList.length !== 0">
+        <div style="display: flex;justify-content: start;align-items: center; margin-left: 2.5vw;margin-top: 10px;">
+          <div style="display: flex;">
+            已用空间：
+            <el-progress :percentage=sizeT :format="format" :color="customColors" :stroke-width=20 style="width: 180px;"></el-progress>
+          </div>
+          <div style="color: #9a9a9a">
+            您的云盘上限为 7GB
+          </div>
+        </div>
 
-  <el-button class="floating-button" icon="el-icon-upload" type="primary" @click="updateOpen" :disabled="sizeFull">上传</el-button>
-  <el-empty v-if="FileList.length === 0">
-    <el-button type="success" @click="updateOpen">上传文件 !</el-button>
-  </el-empty>
-  <div style="height: 80vh; overflow-y: auto;" v-if="FileList.length !== 0">
-    <div style="display: flex;justify-content: start;align-items: center; margin-left: 2.5vw;margin-top: 10px;">
-      <div style="display: flex;">
-        已用空间：
-        <el-progress :percentage=sizeT :format="format" :color="customColors" :stroke-width=20 style="width: 180px;"></el-progress>
-      </div>
-      <div style="color: #9a9a9a">
-        您的云盘上限为 7GB
-      </div>
-    </div>
-
-    <div style="margin-top: 10px;display: flex;flex-wrap: wrap;">
-      <div style="position: relative;
+        <div style="margin-top: 10px;display: flex;flex-wrap: wrap;">
+          <div style="position: relative;
                   width: 180px;
                   min-height: 180px;
                   border-radius: 10px;
@@ -134,56 +133,89 @@ export default {
                   padding: 0.5em;
                   text-align: center;
                   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);"
-           v-for="(item,i) in FileList" :key="i" >
-        <i class="el-icon-folder" style="font-size: 50px;margin-top: 5px;"></i>
-        <div style="word-wrap: break-word;">{{item.name}}</div>
+               v-for="(item,i) in FileList" :key="i" >
+            <i class="el-icon-folder" style="font-size: 50px;margin-top: 5px;"></i>
+            <div style="word-wrap: break-word;">{{item.name}}</div>
 
-        <div style="position: absolute;left: 0; bottom: 10px;width: 100%; display: flex; justify-content: space-evenly;">
-          <a :href="item.file" :download="item.name" target="_blank">
-            <el-button slot="reference" icon="el-icon-download" style="font-size: 25px;background-color: transparent;"></el-button>
-          </a>
-          <button class="delButton" @click="fileDel(item.file)">
-            <svg viewBox="0 0 448 512" class="svgIcon"><path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"></path></svg>
-          </button>
+            <div style="position: absolute;left: 0; bottom: 10px;width: 100%; display: flex; justify-content: space-evenly;">
+              <a :href="item.file" :download="item.name" target="_blank">
+                <el-button slot="reference" icon="el-icon-download" style="font-size: 25px;background-color: transparent;"></el-button>
+              </a>
+              <button class="delButton" @click="fileDel(item.file)">
+                <svg viewBox="0 0 448 512" class="svgIcon"><path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"></path></svg>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+      <el-divider><i class="el-icon-upload2"></i>  上 传 文 件</el-divider>
+      <div class="upBox">
+        <el-upload
+            :action="`${this.postUrl}/files/up/${this.user.id}`"
+            :on-change="handleChange"
+            multiple
+            drag>
+          <i class="el-icon-upload" ></i>
+          <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+        </el-upload>
+      </div>
+    </el-tab-pane>
+    <el-tab-pane label="公共资料夹" name="public">
+      <el-empty v-if="publicFile.length === 0">
+      </el-empty>
+      <div style="height: 80vh; overflow-y: auto;" v-if="publicFile.length !== 0">
+        <div style="margin-top: 10px;display: flex;flex-wrap: wrap;">
+          <div style="position: relative;
+                  width: 180px;
+                  min-height: 180px;
+                  border-radius: 10px;
+                  margin: 1em 1em;
+                  padding: 0.5em;
+                  text-align: center;
+                  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);"
+               v-for="(item,i) in publicFile" :key="i" >
+            <i class="el-icon-folder" style="font-size: 50px;margin-top: 5px;"></i>
+            <div style="word-wrap: break-word;">{{item.name}}</div>
 
-  </div>
+            <div style="position: absolute;left: 0; bottom: 10px;width: 100%; display: flex; justify-content: space-evenly;">
+              <a :href="item.file" :download="item.name" target="_blank">
+                <el-button slot="reference" icon="el-icon-download" style="font-size: 25px;background-color: transparent;"></el-button>
+              </a>
+              <button class="delButton" @click="fileDel(item.file)" v-if="user.roleId!==2">
+                <svg viewBox="0 0 448 512" class="svgIcon"><path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"></path></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <el-divider><i class="el-icon-upload2"></i>  上 传 公 开 文 件</el-divider>
+      <div class="upBox">
+        <el-upload
+            :action="`${this.postUrl}/files/PublicUp`"
+            :on-change="handleChange"
+            multiple
+            drag>
+          <i class="el-icon-upload" ></i>
+          <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+        </el-upload>
+      </div>
+    </el-tab-pane>
+  </el-tabs>
 
-  <el-dialog :visible.sync="drawerUp" center title="上传文件" :fullscreen=isMobile>
-    <div style="text-align: center;">
-      <el-upload
-          :action="`${this.postUrl}/files/up/${this.user.id}`"
-          :on-change="handleChange"
-          multiple
-          drag>
-        <i class="el-icon-upload" ></i>
-        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-      </el-upload>
-    </div>
-    <div slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="drawerUp = false">好的</el-button>
-    </div>
-  </el-dialog>
 </div>
 </template>
 
 <style scoped>
-.floating-button {
-  z-index: 2;
-  position: fixed;
-  bottom: 30px;
-  margin-left: 20px;
-  font-size: 16px;
-  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+.upBox{
+  width: 100%;
+  margin-bottom: 100px;
+  text-align: center;
 }
 /deep/ .el-upload{
-  width: 100%;
+  width: 95%;
 }
 /deep/ .el-upload .el-upload-dragger{
   width: 100%;
-  height: 200px;
 }
 
 .delButton {
